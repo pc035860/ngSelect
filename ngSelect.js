@@ -37,6 +37,12 @@ function ngSelectCtrl($scope, $parse) {
     return _config;
   };
 
+  ctrl.updateOption = function (optionObj, newValue) {
+    optionObj.value = _isNumeric(newValue) ? Number(newValue) : newValue;
+
+    _updateModel();
+  };
+
   ctrl.addOption = function (value) {
     var optionObj = {
       index: _optionIndex++,
@@ -233,7 +239,7 @@ function ngSelectCtrl($scope, $parse) {
       // });
 
       scope.$watch(iAttrs.ngSelect, function (newVal, oldVal) {
-        if (newVal && !angular.equals(newVal, oldVal)) {
+        if (angular.isDefined(newVal) && newVal !== oldVal) {
           ctrl.render();
         }
       }, true);
@@ -259,18 +265,25 @@ function ngSelectCtrl($scope, $parse) {
           disabledExpr, classExpr;
       
       // ng-select-option ready
-      iAttrs.$observe('ngSelectOption', function (val) {
-        if (angular.isDefined(val)) {
-          optionObj = ngSelectCtrl.addOption(iAttrs.ngSelectOption);
-    
-          iElm.bind('click', function () {
-            if (!disabledExpr || !_isDisabled(disabledExpr, optionObj)) {
-              scope.$apply(function () {
-                // triggering select/unselect modifies optionObj
-                ngSelectCtrl[optionObj.selected ? 'unselect' : 'select'](optionObj);
-              });
-            }
-          });
+      iAttrs.$observe('ngSelectOption', function (newVal, oldVal) {
+        if (angular.isDefined(newVal) && newVal !== oldVal) {
+          if (angular.isUndefined(optionObj)) {
+            // first time setup option
+            optionObj = ngSelectCtrl.addOption(newVal);
+      
+            iElm.bind('click', function () {
+              if (!disabledExpr || !_isDisabled(disabledExpr, optionObj)) {
+                scope.$apply(function () {
+                  // triggering select/unselect modifies optionObj
+                  ngSelectCtrl[optionObj.selected ? 'unselect' : 'select'](optionObj);
+                });
+              }
+            });            
+          }
+          else {
+            // update option value
+            ngSelectCtrl.updateOption(optionObj, newVal);
+          }
         }
       });
       
