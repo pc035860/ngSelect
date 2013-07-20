@@ -4,20 +4,22 @@
   <meta charset="UTF-8">
   <title>ngSelect examples</title>
 
-  <!-- <link rel="stylesheet" href="http://twitter.github.io/bootstrap/assets/css/bootstrap.css"> -->
   <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
-  
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/animatecss/0.1/animate.min.css">
+  <link rel="stylesheet" href="http://yandex.st/highlightjs/7.3/styles/github.min.css">
   <link rel="stylesheet/less" type="text/css" href="styles.less" />
+
   <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.3.3/less.min.js"></script>
+  <script src="http://yandex.st/highlightjs/7.3/highlight.min.js"></script>
 
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.1.5/angular.min.js"></script>
   <script src="../ngSelect.js"></script>
 
   <script src="scripts/app.js"></script>
+  <script src="scripts/directives.js"></script>
   <script src="scripts/controllers.js"></script>
 </head>
 <body ng-controller="ExampleCtrl">
-  
   <div class="container">
     <div class="navbar">
       <div class="navbar-inner">
@@ -26,10 +28,15 @@
           <li ng-repeat="link in linkList" ng-class="{'active': path == link}">
             <a ng-href="#{{ link }}">{{ link.substr(1) }}</a>
           </li>
-        </ul>    
+        </ul>
+        <button class="btn btn-primary show-source" ng-click="toggleSource()" ng-show="!source">show source</button>
+        <button class="btn btn-primary show-source" ng-click="toggleSource()" ng-show="source">hide source</button>
       </div>
     </div>
-    <div ng-view></div>
+    <div class="container source-stage" ng-show="source">
+      <code-highlight code="source"></code-highlight>
+    </div>
+    <div ng-view ng-animate="{enter: 'animated fadeInDown'}"></div>
   </div>
 
 </body>
