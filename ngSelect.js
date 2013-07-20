@@ -10,7 +10,6 @@ function ngSelectCtrl($scope, $parse) {
       _modelGetter;
 
   ctrl.EVENT_INIT = 'ngSelect:init';
-  ctrl.EVENT_RENDER = 'ngSelect:render';
 
   ctrl.init = function (config) {
     if (angular.isUndefined(config.model)) {
@@ -139,8 +138,6 @@ function ngSelectCtrl($scope, $parse) {
         }
       });
     }
-
-    $scope.$broadcast(ctrl.EVENT_RENDER, [_config.model]);
   };
 
   function _findOptionIndexByValue(list, value) {
@@ -224,6 +221,7 @@ function ngSelectCtrl($scope, $parse) {
       config.model = iAttrs.ngSelect;
       config.classExpr = iAttrs.selectClass;
       config.disabledExpr = iAttrs.selectDisabled;
+      config.styleExpr = iAttrs.selectStyle;
 
       // delayed to wait for options ready
       $timeout(function () {
@@ -261,32 +259,8 @@ function ngSelectCtrl($scope, $parse) {
     restrict: 'A',
     require: '^ngSelect',
     link: function(scope, iElm, iAttrs, ngSelectCtrl) {
-      var optionObj, classWatchDeregister, oldVal, newVal,
-          disabledExpr, classExpr;
-      
-      // ng-select-option ready
-      iAttrs.$observe('ngSelectOption', function (newVal, oldVal) {
-        if (angular.isDefined(newVal) && newVal !== oldVal) {
-          if (angular.isUndefined(optionObj)) {
-            // first time setup option
-            optionObj = ngSelectCtrl.addOption(newVal);
-      
-            iElm.bind('click', function () {
-              if (!disabledExpr || !_isDisabled(disabledExpr, optionObj)) {
-                scope.$apply(function () {
-                  // triggering select/unselect modifies optionObj
-                  ngSelectCtrl[optionObj.selected ? 'unselect' : 'select'](optionObj);
-                });
-              }
-            });            
-          }
-          else {
-            // update option value
-            ngSelectCtrl.updateOption(optionObj, newVal);
-          }
-        }
-      });
-      
+      var optionObj, disabledExpr, classExpr, styleExpr;
+
       // listen for config ready
       scope.$on(ngSelectCtrl.EVENT_INIT, function (evt, args) {
         var ctrlConfig = ngSelectCtrl.getConfig();
@@ -296,17 +270,37 @@ function ngSelectCtrl($scope, $parse) {
         }
       });
 
-      // listen for class update
-      scope.$on(ngSelectCtrl.EVENT_RENDER, function (evt, args) {
-        var ctrlConfig = ngSelectCtrl.getConfig();
-        // only react on same target model
-        if (angular.isDefined(ctrlConfig) && ctrlConfig.model === args[0]) {
-          // register for scope.$watch on class expression once
-          if (!classWatchDeregister && classExpr) {
-                var watchEval = function (scope) {
-                  return scope.$eval(classExpr, _getExprLocals(optionObj));
-                };
-            classWatchDeregister = scope.$watch(watchEval, _updateClass, true);
+      // ng-select-option ready
+      iAttrs.$observe('ngSelectOption', function (newVal, oldVal) {
+        if (angular.isDefined(newVal) && newVal !== oldVal) {
+          if (angular.isUndefined(optionObj)) {
+            // first time setup option
+            optionObj = ngSelectCtrl.addOption(newVal);
+      
+            // bind click event
+            iElm.bind('click', function () {
+              if (!disabledExpr || !_isDisabled(disabledExpr, optionObj)) {
+                scope.$apply(function () {
+                  // triggering select/unselect modifies optionObj
+                  ngSelectCtrl[optionObj.selected ? 'unselect' : 'select'](optionObj);
+                });
+              }
+              return false;
+            });
+
+            // watch for select-class evaluation
+            scope.$watch(function (scope) {
+              return scope.$eval(classExpr, _getExprLocals(optionObj));
+            }, _updateClass, true);
+
+            // watch for select-style evaluation
+            scope.$watch(function (scope) {
+              return scope.$eval(styleExpr, _getExprLocals(optionObj));
+            }, _updateStyle, true);
+          }
+          else {
+            // update option value
+            ngSelectCtrl.updateOption(optionObj, newVal);
           }
         }
       });
@@ -314,6 +308,7 @@ function ngSelectCtrl($scope, $parse) {
       function _initExprs (ctrlConfig) {
         classExpr = iAttrs.selectClass || ctrlConfig.classExpr;
         disabledExpr = iAttrs.disabledExpr || ctrlConfig.disabledExpr;
+        styleExpr = iAttrs.selectStyle || ctrlConfig.styleExpr;
       }
 
       function _getExprLocals(optionObj) {
@@ -328,40 +323,47 @@ function ngSelectCtrl($scope, $parse) {
         return scope.$eval(disabledExpr, _getExprLocals(optionObj));
       }
 
-      function _updateClass(val) {
-        newVal = val;
-        if (oldVal && !angular.equals(newVal, oldVal)) {
-          _removeClass(oldVal);
+      function _updateStyle(newStyles, oldStyles) {
+        if (oldStyles && (newStyles !== oldStyles)) {
+          angular.forEach(oldStyles, function(val, propertyName) {
+            iElm.css(propertyName, '');
+          });
         }
-        _addClass(newVal);
-        oldVal = angular.copy(newVal);
-      }
-
-      function _removeClass(classVal) {
-        if (angular.isObject(classVal) && !angular.isArray(classVal)) {
-          classVal = _map(classVal, function(v, k) { if (v) { return k; } });
-        }
-        iElm.removeClass(angular.isArray(classVal) ? classVal.join(' ') : classVal);
-      }
-
-      function _addClass(classVal) {
-        if (angular.isObject(classVal) && !angular.isArray(classVal)) {
-          classVal = _map(classVal, function(v, k) { if (v) { return k; } });
-        }
-        if (classVal) {
-          iElm.addClass(angular.isArray(classVal) ? classVal.join(' ') : classVal);
+        if (newStyles) {
+          iElm.css(newStyles);
         }
       }
 
-      function _map(obj, judgeFn) {
-        var list = [];
-        angular.forEach(obj, function (v, k) {
-          var res = judgeFn(v, k);
-          if (res) {
-            list.push(res);
-          }
-        });
-        return list;
+      function _updateClass(newClass, oldClass) {
+        var map = function (obj, judgeFn) {
+              var list = [];
+              angular.forEach(obj, function (v, k) {
+                var res = judgeFn(v, k);
+                if (res) {
+                  list.push(res);
+                }
+              });
+              return list;
+            },
+            removeClass = function (classVal) {
+              if (angular.isObject(classVal) && !angular.isArray(classVal)) {
+                classVal = map(classVal, function(v, k) { if (v) { return k; } });
+              }
+              iElm.removeClass(angular.isArray(classVal) ? classVal.join(' ') : classVal);
+            },
+            addClass = function (classVal) {
+              if (angular.isObject(classVal) && !angular.isArray(classVal)) {
+                classVal = map(classVal, function(v, k) { if (v) { return k; } });
+              }
+              if (classVal) {
+                iElm.addClass(angular.isArray(classVal) ? classVal.join(' ') : classVal);
+              }
+            };
+
+        if (oldClass && !angular.equals(newClass, oldClass)) {
+          removeClass(oldClass);
+        }
+        addClass(newClass);
       }
     }
   };
