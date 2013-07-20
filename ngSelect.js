@@ -232,8 +232,8 @@ function ngSelectCtrl($scope, $parse) {
       //   }
       // });
 
-      scope.$watch(iAttrs.ngSelect, function (val) {
-        if (angular.isDefined(val)) {
+      scope.$watch(iAttrs.ngSelect, function (newVal, oldVal) {
+        if (newVal && !angular.equals(newVal, oldVal)) {
           ctrl.render();
         }
       }, true);
