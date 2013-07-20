@@ -30,11 +30,11 @@ function ngSelectCtrl($scope, $parse) {
       ctrl.setModel(_config.multiple ? [] : null);
     }
 
-    $scope.$broadcast(ctrl.EVENT_INIT);
+    $scope.$broadcast(ctrl.EVENT_INIT, [_config.model]);
   };
 
   ctrl.getConfig = function () {
-    return angular.copy(_config);
+    return _config;
   };
 
   ctrl.addOption = function (value) {
@@ -97,6 +97,10 @@ function ngSelectCtrl($scope, $parse) {
   };
 
   ctrl.render = function () {
+    if (angular.isUndefined(_config)) {
+      return;
+    }
+
     if (_config.multiple) {
       var selection = angular.copy(ctrl.getModel()),
           // shallow copy for optionObj reference
@@ -130,7 +134,7 @@ function ngSelectCtrl($scope, $parse) {
       });
     }
 
-    $scope.$broadcast(ctrl.EVENT_RENDER);
+    $scope.$broadcast(ctrl.EVENT_RENDER, [_config.model]);
   };
 
   function _findOptionIndexByValue(list, value) {
@@ -196,7 +200,7 @@ function ngSelectCtrl($scope, $parse) {
  * @param {boolean} select-multiple  enable multiple selection (optional)
  * @param {expr}    select-disabled  enable/disable selection with expression, available vars ($index, $value, $selected) (optional)
  */
-.directive('ngSelect', ['$parse', function ($parse) {
+.directive('ngSelect', ['$parse', '$timeout', function ($parse, $timeout) {
   // Runs during compile
   return {
     restrict: 'A',
@@ -215,7 +219,10 @@ function ngSelectCtrl($scope, $parse) {
       config.classExpr = iAttrs.selectClass;
       config.disabledExpr = iAttrs.selectDisabled;
 
-      ctrl.init(config);
+      // delayed to wait for options ready
+      $timeout(function () {
+        ctrl.init(config);
+      });
 
       // controller connection
       // iAttrs.$observe('ngSelectCtrl', function (val) {
@@ -252,8 +259,6 @@ function ngSelectCtrl($scope, $parse) {
           classWatchDeregister, oldVal, newVal,
           disabledExpr, classExpr;
 
-      _initExprs();
-
       iElm.bind('click', function () {
         if (!disabledExpr || !_isDisabled(disabledExpr, optionObj)) {
           scope.$apply(function () {
@@ -264,21 +269,30 @@ function ngSelectCtrl($scope, $parse) {
       });
 
       // listen for config ready
-      scope.$on(ngSelectCtrl.EVENT_INIT, _initExprs);
-
-      // listen for class update
-      scope.$on(ngSelectCtrl.EVENT_RENDER, function () {
-        // register for scope.$watch on class expression once
-        if (!classWatchDeregister && classExpr) {
-              var watchEval = function (scope) {
-                return scope.$eval(classExpr, _getExprLocals(optionObj));
-              };
-          classWatchDeregister = scope.$watch(watchEval, _updateClass, true);
+      scope.$on(ngSelectCtrl.EVENT_INIT, function (evt, args) {
+        var ctrlConfig = ngSelectCtrl.getConfig();
+        // only react on same target model
+        if (angular.isDefined(ctrlConfig) && ctrlConfig.model === args[0]) {
+          _initExprs(ctrlConfig);
         }
       });
 
-      function _initExprs () {
-        var ctrlConfig = ngSelectCtrl.getConfig() || {};
+      // listen for class update
+      scope.$on(ngSelectCtrl.EVENT_RENDER, function (evt, args) {
+        var ctrlConfig = ngSelectCtrl.getConfig();
+        // only react on same target model
+        if (angular.isDefined(ctrlConfig) && ctrlConfig.model === args[0]) {
+          // register for scope.$watch on class expression once
+          if (!classWatchDeregister && classExpr) {
+                var watchEval = function (scope) {
+                  return scope.$eval(classExpr, _getExprLocals(optionObj));
+                };
+            classWatchDeregister = scope.$watch(watchEval, _updateClass, true);
+          }
+        }
+      });
+
+      function _initExprs (ctrlConfig) {
         classExpr = iAttrs.selectClass || ctrlConfig.classExpr;
         disabledExpr = iAttrs.disabledExpr || ctrlConfig.disabledExpr;
       }
