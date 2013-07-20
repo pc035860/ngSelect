@@ -33,12 +33,22 @@ module.exports = function(grunt) {
         files: '<%= pkg.name %>.js',
         tasks: ['default'],
       }
+    },
+    connect: {
+      server: {
+        options: {
+          port: 8080,
+          base: '',
+          keepalive: true
+        }
+      }
     }
   });
 
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-contrib-connect');
 
   grunt.registerTask('default', ['jshint:beforeuglify', 'uglify']);
 };
