@@ -1,7 +1,7 @@
 {
   "name": "ngSelect",
   "version": "0.0.1",
-  "description": "An AngularJS directive which makes selection in DOM easy",
+  "description": "AngularJS directive ngSelect",
   "main": "index.js",
   "directories": {
   },
