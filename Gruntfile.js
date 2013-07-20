@@ -5,13 +5,13 @@ module.exports = function(grunt) {
       options: {
         curly: true
       },
-      beforeuglify: ['src/<%= pkg.name %>.js'],
+      beforeuglify: ['<%= pkg.name %>.js'],
       gruntfile: ['Gruntfile.js']
     },
     uglify: {
       build: {
-        src: 'src/<%= pkg.name %>.js',
-        dest: 'build/<%= pkg.name %>.min.js'
+        src: '<%= pkg.name %>.js',
+        dest: '<%= pkg.name %>.min.js'
       },
       options: {
         mangle: true,
