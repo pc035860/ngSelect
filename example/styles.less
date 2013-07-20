@@ -2,6 +2,10 @@
 
 [ng-view] {
 	padding: 0 20px;
+
+	input {
+		font-size: 20px;
+	}
 }
 
 .example {
@@ -18,5 +22,11 @@
 	img {
 		.item;
 		margin-left: 10px;
+	}
+
+	&.multiple {
+		.selected {
+			cursor: pointer !important;
+		}
 	}
 }

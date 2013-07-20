@@ -2,15 +2,17 @@ angular.module('exampleApp', ['ngSelect'],
         ['$routeProvider', 
 function ($routeProvider) {
 
-  $routeProvider
-    .when('/ng-select', {
-      templateUrl: 'partials/ng-select.html'
-      // controller: 'ExampleCtrl',
-      // resolve: {
-      //   key: function () { return 'ng-select'; }
-      // }
-    })
-    .otherwise({
-      redirectTo: '/ng-select'
+  angular.forEach([
+    '/ng-select', '/select-class', '/select-style', '/select-disabled',
+    '/select-multiple'
+  ], function (path) {
+    $routeProvider.when(path, {
+      templateUrl: 'partials' + path + '.html'
     });
+  });
+
+  $routeProvider
+  .otherwise({
+    redirectTo: '/ng-select'
+  });
 }]);

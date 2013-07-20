@@ -1,0 +1,14 @@
+<h3>select-multiple</h3>
+<blockquote>
+  Enables <code>ng-select</code> to support multiple selection, of which the model binded will be an array.
+</blockquote>
+<hr>
+
+<p class="lead">selection: {{ selection }}</p>
+<div class="row example multiple" ng-select="selection" select-class="{'selected': $selected}" select-multiple>
+  <div class="span12">
+    <img class="img-polaroid img-circle" ng-select-option="{{ num }}" 
+         ng-repeat="num in [1, 2, 3, 4, 5] track by $id($index)" 
+         ng-src="http://lorempixel.com/100/100/sports/{{ num }}">
+  </div>
+</div>

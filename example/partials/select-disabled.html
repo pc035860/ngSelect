@@ -1,0 +1,23 @@
+<h3>select-disabled</h3>
+<blockquote>
+  Disables the interactivity of options if the expression is evaluated to be <strong>true</strong>. The evaluation has the access to the additional local scope with <code>$index, $value, $selected</code> varaibles to increase the usage flexibility.
+  <br><br>
+  This optional directive is applicable to both <code>ng-select</code> and <code>ng-select-option</code>, each stands for global and option specific configuration.
+  <br><br>
+  In the example below, the <em>third</em> and <em>fifth</em> options are always disabled.
+</blockquote>
+<hr>
+
+<p class="lead">
+  selection: {{ selection }}
+  <button class="btn btn-danger btn-large" ng-show="!disabled" ng-click="disabled = true">disable</button>
+  <button class="btn btn-success btn-large" ng-show="disabled" ng-click="disabled = false">enable</button>
+</p>
+<div class="row example" ng-select="selection" select-disabled="disabled || ($index == 2 || $index == 4)">
+  <div class="span12">
+    <img class="img-polaroid img-circle" ng-select-option="{{ num }}" 
+         select-class="{'selected': $selected}"
+         ng-repeat="num in [1, 2, 3, 4, 5] track by $id($index)" 
+         ng-src="http://lorempixel.com/100/100/sports/{{ num }}">
+  </div>
+</div>

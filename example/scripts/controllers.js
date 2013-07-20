@@ -5,7 +5,8 @@ angular.module('exampleApp')
 function ($scope,   $location) {
 
   $scope.linkList = [
-    '/ng-select'
+    '/ng-select', '/select-class', '/select-style', '/select-disabled',
+    '/select-multiple'
   ];
 
   // $scope.title = titleMap[key];
