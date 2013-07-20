@@ -309,7 +309,7 @@ function ngSelectCtrl($scope, $parse) {
 
       function _initExprs (ctrlConfig) {
         classExpr = iAttrs.selectClass || ctrlConfig.classExpr;
-        disabledExpr = iAttrs.disabledExpr || ctrlConfig.disabledExpr;
+        disabledExpr = iAttrs.selectDisabled || ctrlConfig.disabledExpr;
         styleExpr = iAttrs.selectStyle || ctrlConfig.styleExpr;
       }
 
