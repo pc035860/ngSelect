@@ -1,0 +1,21 @@
+<h3>ng-select, ng-select-option</h3>
+<blockquote>
+  Two-way binding between <code>ng-select</code> model and <code>ng-select-option</code> values.
+  <br><br>
+  Click on images to change the selection. <br>
+  Modify the selection to see the image reaction.
+</blockquote>
+<hr>
+
+<p>
+  selection: <input type="text" ng-model="selection">
+</p>
+
+<div class="row example" ng-select="selection">
+  <div class="span12">
+    <img class="img-polaroid img-circle" ng-select-option="{{ num }}" 
+         select-class="{'selected': $selected}"
+         ng-repeat="num in [1, 2, 3, 4, 5] track by $id($index)" 
+         ng-src="http://lorempixel.com/100/100/sports/{{ num }}">
+  </div>
+</div>

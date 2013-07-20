@@ -1,0 +1,22 @@
+@import "lesshat";
+
+[ng-view] {
+	padding: 0 20px;
+}
+
+.example {
+	.item () {
+		.transition(~"all 150ms linear");
+		cursor: pointer;
+
+		&.selected {
+			cursor: default;
+			.box-shadow(~"0 0 10px 2px rgba(252, 18, 36, 0.5)");
+		}
+	}
+
+	img {
+		.item;
+		margin-left: 10px;
+	}
+}
