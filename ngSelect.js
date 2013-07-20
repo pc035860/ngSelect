@@ -202,6 +202,7 @@ function ngSelectCtrl($scope, $parse) {
  * @param {expr}    select-class     general class control with vars ($index, $value, $selected) (optional)
  * @param {boolean} select-multiple  enable multiple selection (optional)
  * @param {expr}    select-disabled  enable/disable selection with expression, available vars ($index, $value, $selected) (optional)
+ * @param {expr}    select-style     general style control with vars ($index, $value, $selected) (optional)
  */
 .directive('ngSelect', ['$parse', '$timeout', function ($parse, $timeout) {
   // Runs during compile
@@ -252,6 +253,7 @@ function ngSelectCtrl($scope, $parse) {
  * @param {expr} ng-select-option  select option value
  * @param {expr} select-class      option specific class control with vars ($index, $value, $selected) (optional)
  * @param {expr} select-disabled   option specific enable/disable selection with expression, available vars ($index, $value, $selected) (optional)
+ * @param {expr} select-style      option specific style control with vars ($index, $value, $selected) (optional)
  */
 .directive('ngSelectOption', [function () {
   // Runs during compile
