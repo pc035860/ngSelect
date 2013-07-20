@@ -23,12 +23,23 @@ module.exports = function(grunt) {
           'author: <%= pkg.author %>\n' + 
           '<%= pkg.repository.url %> */\n'
       }
+    },
+    watch: {
+      gruntfile: {
+        files: 'Gruntfile.js',
+        tasks: ['jshint:gruntfile'],
+      },
+      src: {
+        files: '<%= pkg.name %>.js',
+        tasks: ['default'],
+      }
     }
   });
 
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-contrib-watch');
 
-  grunt.registerTask('default', ['jshint:gruntfile', 'jshint:beforeuglify', 'uglify']);
+  grunt.registerTask('default', ['jshint:beforeuglify', 'uglify']);
 };
 
