@@ -255,19 +255,25 @@ function ngSelectCtrl($scope, $parse) {
     restrict: 'A',
     require: '^ngSelect',
     link: function(scope, iElm, iAttrs, ngSelectCtrl) {
-      var optionObj = ngSelectCtrl.addOption(iAttrs.ngSelectOption),
-          classWatchDeregister, oldVal, newVal,
+      var optionObj, classWatchDeregister, oldVal, newVal,
           disabledExpr, classExpr;
-
-      iElm.bind('click', function () {
-        if (!disabledExpr || !_isDisabled(disabledExpr, optionObj)) {
-          scope.$apply(function () {
-            // triggering select/unselect modifies optionObj
-            ngSelectCtrl[optionObj.selected ? 'unselect' : 'select'](optionObj);
+      
+      // ng-select-option ready
+      iAttrs.$observe('ngSelectOption', function (val) {
+        if (angular.isDefined(val)) {
+          optionObj = ngSelectCtrl.addOption(iAttrs.ngSelectOption);
+    
+          iElm.bind('click', function () {
+            if (!disabledExpr || !_isDisabled(disabledExpr, optionObj)) {
+              scope.$apply(function () {
+                // triggering select/unselect modifies optionObj
+                ngSelectCtrl[optionObj.selected ? 'unselect' : 'select'](optionObj);
+              });
+            }
           });
         }
       });
-
+      
       // listen for config ready
       scope.$on(ngSelectCtrl.EVENT_INIT, function (evt, args) {
         var ctrlConfig = ngSelectCtrl.getConfig();
