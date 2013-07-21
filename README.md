@@ -25,22 +25,27 @@ angular.module('myApp', ['ngSelect']);
 ### ng-select
 Type: `model getter`
 Default: `undefined`
+[Example](http://pc035860.github.io/ngSelect/example/#/ng-select)
 
 ##### select-class
 Type: `scope expr`
 Default: `undefined`
+[Example](http://pc035860.github.io/ngSelect/example/#/select-class)
 
 ##### select-style
 Type: `scope expr`
 Default: `undefined`
+[Example](http://pc035860.github.io/ngSelect/example/#/select-style)
 
 ##### select-disabled
 Type: `scope expr`
 Default: `undefined`
+[Example](http://pc035860.github.io/ngSelect/example/#/select-disabled)
 
 ##### select-multiple
 Type: `boolean`
 Default: `false`
+[Example](http://pc035860.github.io/ngSelect/example/#/select-multiple)
 
 ### ng-select-option
 Type: `string`
