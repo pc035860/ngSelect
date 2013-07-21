@@ -2,8 +2,8 @@
 Transform any HTML element on the page to selectable components.
 
 Watch simple demos on Plunker:
-* [Demo with AngularJS 1.0.7](http://plnkr.co/edit/RNZepQ)
-* [Demo with AngularJS 1.1.5](http://plnkr.co/edit/4neUeA)
+* [Demo with AngularJS 1.0.7](http://plnkr.co/edit/RNZepQ?p=preview)
+* [Demo with AngularJS 1.1.5](http://plnkr.co/edit/4neUeA?p=preview)
 
 ## AngularJS version support
 Both stable(1.0.7)/unstable(1.1.5) branch are supported.
@@ -124,8 +124,11 @@ Enables `ng-select` to support multiple selection, of which the model binded wil
 </div>
 ```
 
-
-
 ## Note
 
 1. Duplicate values in `ng-select-option` will cause strange behavior.
+
+## More demos
+
+#### [Dynamic option](http://plnkr.co/edit/0SEzEQ?p=preview)
+`ng-select-option` values can be changed dynamically, and stay binded with `ng-select` model. Try it by selecting the `Other` option in the demo and enter something in the text input.
