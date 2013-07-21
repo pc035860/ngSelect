@@ -14,7 +14,7 @@
 <div class="row example" ng-select="selection">
   <div class="span12">
     <img class="img-polaroid img-circle" ng-select-option="{{ num }}" 
-         select-class="{'selected': $selected}"
+         select-class="{'selected': $optSelected}"
          ng-repeat="num in [1, 2, 3, 4, 5] track by $id($index)" 
          ng-src="http://lorempixel.com/100/100/sports/{{ num }}">
   </div>

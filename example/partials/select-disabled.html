@@ -13,10 +13,10 @@
   <button class="btn btn-danger btn-large" ng-show="!disabled" ng-click="disabled = true">disable</button>
   <button class="btn btn-success btn-large" ng-show="disabled" ng-click="disabled = false">enable</button>
 </p>
-<div class="row example" ng-select="selection" select-disabled="disabled || ($index == 2 || $index == 4)">
+<div class="row example" ng-select="selection" select-disabled="disabled || ($optIndex == 2 || $optIndex == 4)">
   <div class="span12">
     <img class="img-polaroid img-circle" ng-select-option="{{ num }}" 
-         select-class="{'selected': $selected}"
+         select-class="{'selected': $optSelected}"
          ng-repeat="num in [1, 2, 3, 4, 5] track by $id($index)" 
          ng-src="http://lorempixel.com/100/100/sports/{{ num }}">
   </div>

@@ -314,9 +314,13 @@ function ngSelectCtrl($scope, $parse) {
       }
 
       function _getExprLocals(optionObj) {
-        var locals = {};
+        var locals = {},
+            capitalize = function (str) {
+              str = str.toLowerCase();
+              return str.charAt(0).toUpperCase() + str.slice(1);
+            };
         angular.forEach(optionObj, function (value, key) {
-          locals['$' + key] = value;
+          locals['$opt' + capitalize(key)] = value;
         });
         return locals;
       }

@@ -7,7 +7,7 @@
 <hr>
 
 <p class="lead">selection: {{ selection }}</p>
-<div class="row example" ng-select="selection" select-class="{'selected': $selected}">
+<div class="row example" ng-select="selection" select-class="{'selected': $optSelected}">
   <div class="span12">
     <img class="img-polaroid img-circle" ng-select-option="{{ num }}" 
          ng-repeat="num in [1, 2, 3, 4, 5] track by $id($index)" 
