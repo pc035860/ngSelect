@@ -1,5 +1,18 @@
 @import "lesshat";
 
+body > .container {
+	position: relative;
+}
+
+pre {
+	padding: 0 .3em;
+	background-color: none;
+
+	code {
+		background: none;
+	}
+}
+
 [ng-view] {
 	padding: 0 20px;
 
@@ -8,20 +21,11 @@
 	}
 }
 
-body > .container {
-	position: relative;
-}
-
 .source-stage {
 	position: absolute;
 	z-index: 10;
 
 	top: 50px;
-
-	pre {
-		padding: 0;
-		background-color: none;
-	}
 }
 
 .navbar-inner {
