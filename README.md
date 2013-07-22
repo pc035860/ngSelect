@@ -51,6 +51,8 @@ Two-way binding target, the result might be `null` or `[]`(with `select-multiple
 ```
 
 ### ng-select-option
+Require directive: `^ng-select` (means there must be an `ng-select` in parent elements)
+
 Type: `string`
 Default: `undefined`
 
@@ -61,10 +63,12 @@ Special properties are exposed on the local scope of each `ng-select-option` ins
 * `$optSelected` - {boolean} - whether the option is selected
 
 #### select-class (optional)
+Require directive: `ng-select` or `ng-select-option`
+
 Type: `expression`
 Default: `undefined`
 
-Provides the exact same functionality as <code>ng-class</code>, but with the additional local scope applied with `$optIndex`, `$optValue`, `$optSelected` varaibles to increase the usage flexibility. This optional directive is also applicable to `ng-select-option` as local configuration.
+Provides the exact same functionality as <code>ng-class</code>, but with the additional local scope applied with `$optIndex`, `$optValue`, `$optSelected` varaibles to increase the usage flexibility. This optional directive is applicable to `ng-select` as global configuration and also applicable to `ng-select-option` as local configuration.
 
 [Live Example](http://pc035860.github.io/ngSelect/example/#/select-class)
 ```html
@@ -89,10 +93,12 @@ Provides the exact same functionality as <code>ng-class</code>, but with the add
 ```
 
 #### select-style (optional)
+Require directive: `ng-select` or `ng-select-option`
+
 Type: `expression`
 Default: `undefined`
 
-Provides the exact same functionality as <code>ng-style</code>, but with the additional local scope applied with `$optIndex`, `$optValue`, `$optSelected` varaibles to increase the usage flexibility. This optional directive is also applicable to `ng-select-option` as local configuration.
+Provides the exact same functionality as <code>ng-style</code>, but with the additional local scope applied with `$optIndex`, `$optValue`, `$optSelected` varaibles to increase the usage flexibility. This optional directive is applicable to `ng-select` as global configuration and also applicable to `ng-select-option` as local configuration.
 
 [Live Example](http://pc035860.github.io/ngSelect/example/#/select-style)
 ```html
@@ -119,10 +125,12 @@ Provides the exact same functionality as <code>ng-style</code>, but with the add
 ```
 
 #### select-disabled (optional)
+Require directive: `ng-select` or `ng-select-option`
+
 Type: `expression`
 Default: `undefined`
 
-Disables the interactivity of options if the expression is evaluated to be `true`. The evaluation has the access to the additional local scope with `$optIndex`, `$optValue`, `$optSelected` varaibles to increase the usage flexibility. This optional directive is also applicable to `ng-select-option` as local configuration.
+Disables the interactivity of options if the expression is evaluated to be `true`. The evaluation has the access to the additional local scope with `$optIndex`, `$optValue`, `$optSelected` varaibles to increase the usage flexibility. This optional directive is applicable to `ng-select` as global configuration and also applicable to `ng-select-option` as local configuration.
 
 [Live Example](http://pc035860.github.io/ngSelect/example/#/select-disabled)
 ```html
@@ -160,10 +168,12 @@ Disables the interactivity of options if the expression is evaluated to be `true
 ```
 
 #### select-multiple (optional)
+Require directive: `ng-select`
+
 Type: `boolean`
 Default: `false`
 
-Enables `ng-select` to support multiple selection, of which the model binded will be an array.
+Enables `ng-select` to support multiple selection, of which the model binded will be an array. This optional directive is only applicable to `ng-select`.
 
 [Live Example](http://pc035860.github.io/ngSelect/example/#/select-multiple)
 ```html
