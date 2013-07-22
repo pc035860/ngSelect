@@ -36,12 +36,6 @@ function ngSelectCtrl($scope, $parse) {
     return _config;
   };
 
-  ctrl.updateOption = function (optionObj, newValue) {
-    optionObj.value = _isNumeric(newValue) ? Number(newValue) : newValue;
-
-    _updateModel();
-  };
-
   ctrl.addOption = function (value) {
     var optionObj = {
       index: _optionIndex++,
@@ -51,6 +45,27 @@ function ngSelectCtrl($scope, $parse) {
 
     _options.push(optionObj);
     return optionObj;
+  };
+
+  ctrl.updateOption = function (optionObj, newValue) {
+    optionObj.value = _isNumeric(newValue) ? Number(newValue) : newValue;
+
+    _updateModel();
+  };
+
+  ctrl.removeOption = function (optionObj) {
+    if (optionObj.selected) {
+      ctrl.unselect();
+    }
+
+    var i, l, option;
+    for (i = 0, l = _options.length; i < l; i++) {
+      option = _options[i];
+      if (angular.equals(optionObj, option)) {
+        _options.splice(i, 1);
+        break;
+      }
+    }
   };
 
   ctrl.select = function (optionObj) {
@@ -269,6 +284,13 @@ function ngSelectCtrl($scope, $parse) {
         // only react on same target model
         if (angular.isDefined(ctrlConfig) && ctrlConfig.model === args[0]) {
           _initExprs(ctrlConfig);
+        }
+      });
+
+      // listen for directive destroy
+      scope.$on('$destroy', function () {
+        if (angular.isDefined(optionObj)) {
+          ngSelectCtrl.removeOption(optionObj);
         }
       });
 
