@@ -4,11 +4,23 @@
 </blockquote>
 <hr>
 
+<!-- display of selection -->
 <p class="lead">selection: {{ selection }}</p>
-<div class="row example multiple" ng-select="selection" select-class="{'selected': $optSelected}" select-multiple>
+
+<!-- bind scope.selection to ngSelect model -->
+<!-- add "selected" class on option selected -->
+<!-- enable multiple selection -->
+<div class="row example multiple" 
+     ng-select="selection" 
+     select-class="{'selected': $optSelected}" 
+     select-multiple>
+
   <div class="span12">
-    <img class="img-polaroid img-circle" ng-select-option="{{ num }}" 
+
+    <!-- five images with number as option value -->
+    <img class="img-polaroid img-circle" 
          ng-repeat="num in [1, 2, 3, 4, 5] track by $id($index)" 
-         ng-src="http://lorempixel.com/100/100/sports/{{ num }}">
+         ng-src="http://lorempixel.com/100/100/sports/{{ num }}"
+         ng-select-option="{{ num }}">
   </div>
 </div>

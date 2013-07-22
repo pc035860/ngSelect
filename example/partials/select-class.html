@@ -6,11 +6,21 @@
 </blockquote>
 <hr>
 
+<!-- display of selection -->
 <p class="lead">selection: {{ selection }}</p>
-<div class="row example" ng-select="selection" select-class="{'selected': $optSelected}">
+
+<!-- bind scope.selection to ngSelect model -->
+<!-- add "selected" class on option selected -->
+<div class="row example"
+     ng-select="selection" 
+     select-class="{'selected': $optSelected}">
+
   <div class="span12">
-    <img class="img-polaroid img-circle" ng-select-option="{{ num }}" 
+    
+    <!-- five images with number as option value -->
+    <img class="img-polaroid img-circle" 
          ng-repeat="num in [1, 2, 3, 4, 5] track by $id($index)" 
-         ng-src="http://lorempixel.com/100/100/sports/{{ num }}">
+         ng-src="http://lorempixel.com/100/100/sports/{{ num }}"
+         ng-select-option="{{ num }}">
   </div>
 </div>
