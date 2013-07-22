@@ -1,7 +1,7 @@
 angular.module('ngSelect', [])
 
-.controller('ngSelectCtrl', ['$scope', '$parse',
-function ngSelectCtrl($scope, $parse) {
+.controller('NgSelectCtrl', ['$scope', '$parse',
+function NgSelectCtrl($scope, $parse) {
   var ctrl = this;
 
   var _optionIndex = 0,
@@ -223,7 +223,7 @@ function ngSelectCtrl($scope, $parse) {
   // Runs during compile
   return {
     restrict: 'A',
-    controller: 'ngSelectCtrl',
+    controller: 'NgSelectCtrl',
     link: function(scope, iElm, iAttrs, ctrl) {
       var config = {};
       
