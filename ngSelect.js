@@ -1,7 +1,8 @@
 angular.module('ngSelect', [])
 
-.controller('NgSelectCtrl', ['$scope', '$parse',
-function NgSelectCtrl($scope, $parse) {
+.controller('NgSelectCtrl', [
+                     '$scope', '$parse',
+function NgSelectCtrl($scope,   $parse) {
   var ctrl = this;
 
   var _optionIndex = 0,
@@ -10,8 +11,6 @@ function NgSelectCtrl($scope, $parse) {
       _modelGetter,
       // leftover render
       _dirty = false;
-
-  ctrl.EVENT_INIT = 'ngSelect:init';
 
   ctrl.init = function (config) {
     if (angular.isUndefined(config.model)) {
@@ -30,9 +29,6 @@ function NgSelectCtrl($scope, $parse) {
     if (angular.isUndefined(model)) {
       ctrl.setModel(_config.multiple ? [] : null);
     }
-
-    // notify options that config init ready
-    $scope.$broadcast(ctrl.EVENT_INIT, [_config.model]);
 
     if (_dirty) {
       // needs immediate render
@@ -64,7 +60,7 @@ function NgSelectCtrl($scope, $parse) {
 
   ctrl.removeOption = function (optionObj) {
     if (optionObj.selected) {
-      ctrl.unselect();
+      ctrl.unselect(optionObj);
     }
 
     var i, l, option;
@@ -230,44 +226,43 @@ function NgSelectCtrl($scope, $parse) {
  * @param {expr}    select-disabled  enable/disable selection with expression, available vars ($index, $value, $selected) (optional)
  * @param {expr}    select-style     general style control with vars ($index, $value, $selected) (optional)
  */
-.directive('ngSelect', ['$parse', '$timeout', function ($parse, $timeout) {
+.directive('ngSelect', [function () {
   // Runs during compile
   return {
     restrict: 'A',
     controller: 'NgSelectCtrl',
-    link: function(scope, iElm, iAttrs, ctrl) {
-      var config = {};
-      
-      // judge multiple
-      config.multiple = (function () {
-        if (angular.isUndefined(iAttrs.selectMultiple)) {
-          return false;
-        }
-        return (iAttrs.selectMultiple === '' || Number(iAttrs.selectMultiple) === 1);
-      }());
-      config.model = iAttrs.ngSelect;
-      config.classExpr = iAttrs.selectClass;
-      config.disabledExpr = iAttrs.selectDisabled;
-      config.styleExpr = iAttrs.selectStyle;
+    link: {
+      pre: function preLink(scope, iElm, iAttrs, ctrl) {
+        var config = {};
+        
+        // judge multiple
+        config.multiple = (function () {
+          if (angular.isUndefined(iAttrs.selectMultiple)) {
+            return false;
+          }
+          return (iAttrs.selectMultiple === '' || Number(iAttrs.selectMultiple) === 1);
+        }());
+        config.model = iAttrs.ngSelect;
+        config.classExpr = iAttrs.selectClass;
+        config.disabledExpr = iAttrs.selectDisabled;
+        config.styleExpr = iAttrs.selectStyle;
 
-      // delayed to wait for options ready
-      $timeout(function () {
         ctrl.init(config);
-      });
 
-      // controller connection
-      // iAttrs.$observe('ngSelectCtrl', function (val) {
-      //   if (angular.isDefined(val)) {
-      //     var assignFunc = $parse(val).assign;
-      //     assignFunc(scope, ctrl);
-      //   }
-      // });
+        // controller connection
+        // iAttrs.$observe('ngSelectCtrl', function (val) {
+        //   if (angular.isDefined(val)) {
+        //     var assignFunc = $parse(val).assign;
+        //     assignFunc(scope, ctrl);
+        //   }
+        // });
 
-      scope.$watch(iAttrs.ngSelect, function (newVal, oldVal) {
-        if (angular.isDefined(newVal) && newVal !== oldVal) {
-          ctrl.render();
-        }
-      }, true);
+        scope.$watch(iAttrs.ngSelect, function (newVal, oldVal) {
+          if (angular.isDefined(newVal) && newVal !== oldVal) {
+            ctrl.render();
+          }
+        }, true);
+      }
     }
   };
 }])
@@ -289,14 +284,8 @@ function NgSelectCtrl($scope, $parse) {
     link: function(scope, iElm, iAttrs, ngSelectCtrl) {
       var optionObj, disabledExpr, classExpr, styleExpr;
 
-      // listen for config ready
-      scope.$on(ngSelectCtrl.EVENT_INIT, function (evt, args) {
-        var ctrlConfig = ngSelectCtrl.getConfig();
-        // only react on same target model
-        if (angular.isDefined(ctrlConfig) && ctrlConfig.model === args[0]) {
-          _initExprs(ctrlConfig);
-        }
-      });
+      // init expressions
+      _initExprs(ngSelectCtrl.getConfig());
 
       // listen for directive destroy
       scope.$on('$destroy', function () {
