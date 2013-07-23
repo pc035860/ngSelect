@@ -7,7 +7,9 @@ function NgSelectCtrl($scope, $parse) {
   var _optionIndex = 0,
       _config,
       _options = [],
-      _modelGetter;
+      _modelGetter,
+      // leftover render
+      _dirty = false;
 
   ctrl.EVENT_INIT = 'ngSelect:init';
 
@@ -29,7 +31,14 @@ function NgSelectCtrl($scope, $parse) {
       ctrl.setModel(_config.multiple ? [] : null);
     }
 
+    // notify options that config init ready
     $scope.$broadcast(ctrl.EVENT_INIT, [_config.model]);
+
+    if (_dirty) {
+      // needs immediate render
+      _dirty = false;
+      ctrl.render();
+    }
   };
 
   ctrl.getConfig = function () {
@@ -118,6 +127,8 @@ function NgSelectCtrl($scope, $parse) {
 
   ctrl.render = function () {
     if (angular.isUndefined(_config)) {
+      // delayed render for config init by setting dirty flag
+      _dirty = true;
       return;
     }
 
