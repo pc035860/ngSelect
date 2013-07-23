@@ -13,13 +13,14 @@
   <script src="http://yandex.st/highlightjs/7.3/highlight.min.js"></script>
 
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.1.5/angular.min.js"></script>
+  <script src="http://pc035860.github.io/angular-highlightjs/angular-highlightjs.js"></script>
   <script src="../ngSelect.js"></script>
 
   <script src="scripts/app.js"></script>
-  <script src="scripts/directives.js"></script>
   <script src="scripts/controllers.js"></script>
 </head>
 <body ng-controller="ExampleCtrl">
+  <div class="source-overlay" ng-show="source"></div>
   <div class="container">
     <div class="navbar">
       <div class="navbar-inner">
@@ -34,9 +35,9 @@
       </div>
     </div>
     <div class="container source-stage" ng-show="source">
-      <code-highlight code="source"></code-highlight>
+      <div hljs source="source"></div>
     </div>
-    <div ng-view ng-animate="{enter: 'animated fadeInDown'}"></div>
+    <div ng-view></div>
   </div>
 
 </body>
