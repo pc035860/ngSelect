@@ -221,10 +221,10 @@ function NgSelectCtrl($scope,   $parse) {
  * @description transform any dom elements to selectable object - container
  *
  * @param {expr}    ng-select        model
- * @param {expr}    select-class     general class control with vars ($index, $value, $selected) (optional)
+ * @param {expr}    select-class     general class control with vars ($optIndex, $optValue, $optSelected) (optional)
  * @param {boolean} select-multiple  enable multiple selection (optional)
- * @param {expr}    select-disabled  enable/disable selection with expression, available vars ($index, $value, $selected) (optional)
- * @param {expr}    select-style     general style control with vars ($index, $value, $selected) (optional)
+ * @param {expr}    select-disabled  enable/disable selection with expression, available vars ($optIndex, $optValue, $optSelected) (optional)
+ * @param {expr}    select-style     general style control with vars ($optIndex, $optValue, $optSelected) (optional)
  */
 .directive('ngSelect', [function () {
   // Runs during compile
@@ -272,9 +272,9 @@ function NgSelectCtrl($scope,   $parse) {
  * @description transform any dom elements to selectable object - child
  *
  * @param {expr} ng-select-option  select option value
- * @param {expr} select-class      option specific class control with vars ($index, $value, $selected) (optional)
- * @param {expr} select-disabled   option specific enable/disable selection with expression, available vars ($index, $value, $selected) (optional)
- * @param {expr} select-style      option specific style control with vars ($index, $value, $selected) (optional)
+ * @param {expr} select-class      option specific class control with vars ($optIndex, $optValue, $optSelected) (optional)
+ * @param {expr} select-disabled   option specific enable/disable selection with expression, available vars ($optIndex, $optValue, $optSelected) (optional)
+ * @param {expr} select-style      option specific style control with vars ($optIndex, $optValue, $optSelected) (optional)
  */
 .directive('ngSelectOption', [function () {
   // Runs during compile
