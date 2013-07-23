@@ -40,7 +40,7 @@ Two-way binding target, the result might be `null` or `[]`(with `select-multiple
     <!-- five images with number as option value -->
     <!-- add "selected" class on option selected -->
     <img class="img-polaroid img-circle" 
-         ng-repeat="num in [1, 2, 3, 4, 5] track by $id($index)" 
+         ng-repeat="num in [1, 2, 3, 4, 5]" 
          ng-src="http://lorempixel.com/100/100/sports/{{ num }}"
          ng-select-option="{{ num }}" 
          select-class="{'selected': $optSelected}">
@@ -83,7 +83,7 @@ Provides the exact same functionality as <code>ng-class</code>, but with the add
     
     <!-- five images with number as option value -->
     <img class="img-polaroid img-circle" 
-         ng-repeat="num in [1, 2, 3, 4, 5] track by $id($index)" 
+         ng-repeat="num in [1, 2, 3, 4, 5]" 
          ng-src="http://lorempixel.com/100/100/sports/{{ num }}"
          ng-select-option="{{ num }}">
   </div>
@@ -114,7 +114,7 @@ Provides the exact same functionality as <code>ng-style</code>, but with the add
     <!-- five images with number as option value -->
     <!-- add "selected" class on option selected -->
     <img class="img-polaroid img-circle" 
-         ng-repeat="num in [1, 2, 3, 4, 5] track by $id($index)" 
+         ng-repeat="num in [1, 2, 3, 4, 5]" 
          ng-src="http://lorempixel.com/100/100/sports/{{ num }}"
          ng-select-option="{{ num }}"
          select-class="{'selected': $optSelected}">
@@ -157,7 +157,7 @@ Disables the interactivity of options if the expression is evaluated to be `true
     <!-- five images with number as option value -->
     <!-- add "selected" class on option selected -->
     <img class="img-polaroid img-circle" 
-         ng-repeat="num in [1, 2, 3, 4, 5] track by $id($index)" 
+         ng-repeat="num in [1, 2, 3, 4, 5]" 
          ng-src="http://lorempixel.com/100/100/sports/{{ num }}"
          ng-select-option="{{ num }}" 
          select-class="{'selected': $optSelected}">
@@ -190,7 +190,7 @@ Enables `ng-select` to support multiple selection, of which the model binded wil
 
     <!-- five images with number as option value -->
     <img class="img-polaroid img-circle" 
-         ng-repeat="num in [1, 2, 3, 4, 5] track by $id($index)" 
+         ng-repeat="num in [1, 2, 3, 4, 5]" 
          ng-src="http://lorempixel.com/100/100/sports/{{ num }}"
          ng-select-option="{{ num }}">
   </div>
