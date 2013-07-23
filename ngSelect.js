@@ -42,10 +42,12 @@ function NgSelectCtrl($scope,   $parse) {
   };
 
   ctrl.addOption = function (value) {
+    value = _isNumeric(value) ? Number(value) : value;
+
     var optionObj = {
       index: _optionIndex++,
-      value: _isNumeric(value) ? Number(value) : value,
-      selected: false
+      value: value,
+      selected: (value == ctrl.getModel())
     };
 
     _options.push(optionObj);
@@ -258,7 +260,7 @@ function NgSelectCtrl($scope,   $parse) {
         // });
 
         scope.$watch(iAttrs.ngSelect, function (newVal, oldVal) {
-          if (angular.isDefined(newVal)) {
+          if (angular.isDefined(newVal) && newVal !== oldVal) {
             ctrl.render();
           }
         }, true);
