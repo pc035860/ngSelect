@@ -1,12 +1,10 @@
 # ngSelect
 Transform any HTML element on the page to selectable components.
 
-Watch simple demos on Plunker:
-* [Demo with AngularJS 1.0.7](http://plnkr.co/edit/RNZepQ?p=preview)
-* [Demo with AngularJS 1.1.5](http://plnkr.co/edit/4neUeA?p=preview)
+#### [Demo](http://plnkr.co/edit/4neUeA?p=preview)
 
-## AngularJS version support
-Both stable(1.0.7)/unstable(1.1.5) branch are supported.
+## Requirements
+AngularJS v1.0.1+
 
 ## Getting started
 Include the ngSelect module with AngularJS script in your page.
