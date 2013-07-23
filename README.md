@@ -205,3 +205,6 @@ Enables `ng-select` to support multiple selection, of which the model binded wil
 
 #### [Dynamic-valued option](http://plnkr.co/edit/0SEzEQ?p=preview)
 `ng-select-option` values can be changed dynamically, and stay binded with `ng-select` model. Try it by selecting the `Other` option in the demo and enter something in the text input.
+
+#### [Angular-highlightjs demo (feat. ngSelect)](http://plnkr.co/edit/8Yy8L3pb8o7C2A46VK1g?p=preview)
+Super easy tab implementation with `ngSelect`.
