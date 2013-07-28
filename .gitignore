@@ -1,0 +1,4 @@
+node_modules
+ngSelect.sublime-*
+.tern-port
+.DS_Store
