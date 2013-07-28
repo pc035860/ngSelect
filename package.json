@@ -19,7 +19,6 @@
   "author": "Robin Fan",
   "license": "MIT",
   "readmeFilename": "README.md",
-  "gitHead": "5163dbb6b8f2367d689a432c25e55e922d37a4c9",
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-contrib-uglify": "~0.2.0",
