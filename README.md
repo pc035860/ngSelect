@@ -1,5 +1,5 @@
 # ngSelect
-Transform any HTML element on the page to selectable components.
+An AngularJS module that transforms any HTML element on the page to selectable components.
 
 #### [Demo](http://plnkr.co/edit/4neUeA?p=preview)
 
