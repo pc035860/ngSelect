@@ -12,6 +12,9 @@
     "test",
     "tests"
   ],
-  "dependencies": {
+  "dependencies": {},
+  "devDependencies": {
+    "angular": "PatternConsulting/bower-angular#~1.1.5",
+    "angular-highlightjs": "~0.1.1"
   }
 }
