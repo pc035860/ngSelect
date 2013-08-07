@@ -18,6 +18,20 @@ Add `ngSelect` to your app module's dependency.
 angular.module('myApp', ['ngSelect']);
 ```
 
+## Install with Bower
+
+The official bower package of AngularJS hasn't support unstable branch, hence for the current version of `ngSelect` package, no dependency is specified.
+
+```sh
+# install AngularJS (stable)
+bower install angular
+# or (unstable)
+bower install PatternConsulting/bower-angular
+
+# install ngSelect
+bower install ngSelect
+```
+
 ## Usage
 
 ### ng-select
