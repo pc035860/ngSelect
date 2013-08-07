@@ -1,7 +1,7 @@
 {
   "name": "ngSelect",
-  "version": "0.0.1",
-  "description": "AngularJS directive ngSelect",
+  "version": "0.1.0",
+  "description": "An AngularJS module that transforms any HTML element on the page to selectable components.",
   "main": "index.js",
   "directories": {},
   "scripts": {
