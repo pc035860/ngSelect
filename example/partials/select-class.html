@@ -1,0 +1,26 @@
+<h3>select-class</h3>
+<blockquote>
+  Provides the exact same functionality as <code>ng-class</code>, but with the additional local scope applied with <code>$optIndex</code>, <code>$optValue</code>, <code>$optSelected</code> varaibles to increase the usage flexibility.
+  <br><br>
+  This optional directive is applicable to both <code>ng-select</code> and <code>ng-select-option</code>, each stands for global and option specific configuration.
+</blockquote>
+<hr>
+
+<!-- display of selection -->
+<p class="lead">selection: {{ selection }}</p>
+
+<!-- bind scope.selection to ngSelect model -->
+<!-- add "selected" class on option selected -->
+<div class="row example"
+     ng-select="selection" 
+     select-class="{'selected': $optSelected}">
+
+  <div class="span12">
+    
+    <!-- five images with number as option value -->
+    <img class="img-polaroid img-circle" 
+         ng-repeat="num in [1, 2, 3, 4, 5]" 
+         ng-src="http://lorempixel.com/100/100/sports/{{ num }}"
+         ng-select-option="{{ num }}">
+  </div>
+</div>
