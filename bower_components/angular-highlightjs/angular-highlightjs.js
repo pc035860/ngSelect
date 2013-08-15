@@ -1,11 +1,20 @@
 angular.module('hljs', [])
 
-.controller('HljsCtrl', [function HljsCtrl () {
+.factory('$hljsCache', [
+         '$cacheFactory',
+function ($cacheFactory) {
+  return $cacheFactory('$hljsCache');
+}])
+
+.controller('HljsCtrl', [
+                  '$hljsCache',
+function HljsCtrl ($hljsCache) {
   var ctrl = this;
 
   var _elm = null,
       _lang = null,
-      _code = null;
+      _code = null,
+      _hlCb = null;
 
   ctrl.init = function (codeElm) {
     _elm = codeElm;
@@ -19,25 +28,37 @@ angular.module('hljs', [])
     }
   };
 
+  ctrl.highlightCallback = function (cb) {
+    _hlCb = cb;
+  };
+
   ctrl.highlight = function (code) {
     if (!_elm) {
       return;
     }
 
-    var res;
+    var res, cacheKey;
 
     _code = code;
 
     if (_lang) {
       // language specified
-      res = hljs.highlight(_lang, _code, true);
+      cacheKey = ctrl._cacheKey(_lang, _code);
+      res = $hljsCache.get(cacheKey) || 
+            $hljsCache.put(cacheKey, hljs.highlight(_lang, _code, true));
     }
     else {
       // language auto-detect
-      res = hljs.highlightAuto(_code);
+      cacheKey = ctrl._cacheKey(_code);
+      res = $hljsCache.get(cacheKey) || 
+            $hljsCache.put(cacheKey, hljs.highlightAuto(_code));
     }
 
     _elm.html(res.value);
+
+    if (_hlCb !== null && angular.isFunction(_hlCb)) {
+      _hlCb();
+    }
   };
 
   ctrl.clear = function () {
@@ -50,6 +71,12 @@ angular.module('hljs', [])
 
   ctrl.release = function () {
     _elm = null;
+  };
+
+  ctrl._cacheKey = function () {
+    var args = Array.prototype.slice.call(arguments),
+        glue = "!angular-highlightjs!";
+    return args.join(glue);
   };
 }])
 
@@ -67,6 +94,12 @@ angular.module('hljs', [])
 
       return function postLink(scope, iElm, iAttrs, ctrl) {
         ctrl.init(iElm.find('code'));
+
+        if (iAttrs.onhighlight) {
+          ctrl.highlightCallback(function () {
+            scope.$eval(iAttrs.onhighlight);
+          });
+        }
 
         if (staticCode) {
           ctrl.highlight(staticCode);

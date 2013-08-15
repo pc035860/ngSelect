@@ -16,13 +16,20 @@
   "dependencies": {
     "highlightjs": "~7.3.0"
   },
+  "devDependencies": {
+    "angular": "PatternConsulting/bower-angular#~1.1.5",
+    "highlightjs": "~7.3.0",
+    "ngSelect": "~0.1.0",
+    "bootstrap": "~3.0.0-rc1",
+    "angular-ui-router": "~0.0.1"
+  },
   "homepage": "https://github.com/pc035860/angular-highlightjs",
-  "version": "0.1.1",
-  "_release": "0.1.1",
+  "version": "0.1.2",
+  "_release": "0.1.2",
   "_resolution": {
     "type": "version",
-    "tag": "v0.1.1",
-    "commit": "ee6e84f405dfb3b2887c076577869444443bec03"
+    "tag": "v0.1.2",
+    "commit": "94041d61482dd6eca1408eeab69143c239256bbc"
   },
   "_source": "git://github.com/pc035860/angular-highlightjs.git",
   "_target": "~0.1.1"
