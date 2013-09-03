@@ -1,16 +1,50 @@
 angular.module('ngSelect', [])
 
 .controller('NgSelectCtrl', [
-                     '$scope', '$parse',
-function NgSelectCtrl($scope,   $parse) {
+                     '$scope', '$parse', '$document',
+function NgSelectCtrl($scope,   $parse,   $document) {
   var ctrl = this;
+
+  var KEY_ID_CTRL = 'Control',
+      KEY_ID_SHIFT = 'Shift',
+      KEY_ID_ALT = 'Alt';
 
   var _optionIndex = 0,
       _config,
       _options = [],
       _modelGetter,
+      _modiDown = {
+        // ctrl & super
+        ctrl: false,
+        alt: false,
+        shift: false
+      },
       // leftover render
       _dirty = false;
+
+  function _docKeydownHandler(evt) {
+    if (evt.keyIdentifier === KEY_ID_CTRL) {
+      _modiDown.ctrl = true;
+    }
+    else if (evt.keyIdentifier === KEY_ID_SHIFT) {
+      _modiDown.shift = true;
+    }
+    else if (evt.keyIdentifier === KEY_ID_ALT) {
+      _modiDown.alt = true;
+    }
+  }
+
+  function _docKeyupHandler(evt) {
+    if (evt.keyIdentifier === KEY_ID_CTRL) {
+      _modiDown.ctrl = false;
+    }
+    else if (evt.keyIdentifier === KEY_ID_SHIFT) {
+      _modiDown.shift = false;
+    }
+    else if (evt.keyIdentifier === KEY_ID_ALT) {
+      _modiDown.alt = false;
+    }
+  }
 
   ctrl.init = function (config) {
     if (angular.isUndefined(config.model)) {
@@ -18,7 +52,10 @@ function NgSelectCtrl($scope,   $parse) {
     }
 
     config = angular.extend({
-      multiple: false
+      multiple: false,
+      ctrlModifier: false,
+      shiftModifier: false,
+      altModifier: false
     }, config);
 
     _config = angular.copy(config);
@@ -27,7 +64,7 @@ function NgSelectCtrl($scope,   $parse) {
     // initialize model
     var model = ctrl.getModel();
     if (angular.isUndefined(model)) {
-      ctrl.setModel(_config.multiple ? [] : null);
+      ctrl.setModel(_config.multiple ? [] : undefined);
     }
 
     if (_dirty) {
@@ -35,6 +72,16 @@ function NgSelectCtrl($scope,   $parse) {
       _dirty = false;
       ctrl.render();
     }
+
+    if (ctrl.modifierEnabled()) {
+      $document
+        .bind('keydown', _docKeydownHandler)
+        .bind('keyup', _docKeyupHandler);
+    }
+  };
+
+  ctrl.modifierEnabled = function () {
+    return (_config.ctrlModifier || _config.shiftModifier || _config.altModifier);
   };
 
   ctrl.getConfig = function () {
@@ -75,15 +122,49 @@ function NgSelectCtrl($scope,   $parse) {
     }
   };
 
-  ctrl.select = function (optionObj) {
-    optionObj.selected = true;
+  ctrl.handleClick = function (optionObj) {
+    if (!ctrl.modifierEnabled()) {
+      ctrl[optionObj.selected ? 'unselect' : 'select'](optionObj);
+      return;
+    }
+    
+    if (_config.ctrlModifier) {
+      /**
+       * simulate windows selection(with ctrl) behavior
+       */
+      if (_modiDown.ctrl) {
+        ctrl[optionObj.selected ? 'unselect' : 'select'](optionObj);
+      }
+      else {
+        ctrl.select(optionObj);
+      }
+      return;
+    }
+  };
 
-    if (!_config.multiple) {
+  ctrl.select = function (optionObj) {
+    var unselectOthers = function () {
       angular.forEach(_options, function (option) {
         if (option.index !== optionObj.index) {
           option.selected = false;
         }
       });
+    };
+
+    optionObj.selected = true;
+
+    if (!_config.multiple) {
+      unselectOthers();
+    }
+    else {
+      if (ctrl.modifierEnabled()) {
+        if (_config.ctrlModifier && _modiDown.ctrl) {
+          // do nothing
+        }
+        else {
+          unselectOthers();
+        }
+      }
     }
 
     _updateModel();
@@ -110,7 +191,7 @@ function NgSelectCtrl($scope,   $parse) {
       }
     }
     else {
-      ctrl.setModel(null);
+      ctrl.setModel(undefined);
     }
   };
 
@@ -164,6 +245,16 @@ function NgSelectCtrl($scope,   $parse) {
     }
   };
 
+  ctrl.recycle = function () {
+    _options.length = 0;
+
+    if (ctrl.modifierEnabled()) {
+      $document
+        .unbind('keydown', _docKeydownHandler)
+        .unbind('keyup', _docKeyupHandler);
+    }
+  };
+
   function _findOptionIndexByValue(list, value) {
     var i, l = list.length;
     for (i = 0; i < l; i++) {
@@ -203,7 +294,7 @@ function NgSelectCtrl($scope,   $parse) {
       }
     }
     else {
-      selection = null;
+      selection = undefined;
       // update model with scalar value
       var i, l, option;
       for (i = 0, l = _options.length; i < l; i++) {
@@ -229,21 +320,57 @@ function NgSelectCtrl($scope,   $parse) {
  * @param {expr}    select-style     general style control with vars ($optIndex, $optValue, $optSelected) (optional)
  */
 .directive('ngSelect', [function () {
+  function _evalAsBoolean(scope, expr) {
+    if (angular.isUndefined(expr)) {
+      return false;
+    }
+
+    if (expr === '') {
+      return true;
+    }
+
+    return Boolean(scope.$eval(expr));
+  }
+
   // Runs during compile
   return {
     restrict: 'A',
     controller: 'NgSelectCtrl',
     link: {
       pre: function preLink(scope, iElm, iAttrs, ctrl) {
-        var config = {};
+        var config = {}, buf;
         
-        // judge multiple
-        config.multiple = (function () {
-          if (angular.isUndefined(iAttrs.selectMultiple)) {
-            return false;
+        config.multiple = _evalAsBoolean(scope, iAttrs.selectMultiple);
+
+        /**
+         * modifiers are only available in multiple selection mode
+         */
+        if (iAttrs.selectModifiers && config.multiple) {
+          if (iAttrs.selectModifiers === '*') {
+            config.ctrlModifier = true;
+            config.shiftModifier = true;
+            config.altModifier = true;
           }
-          return (iAttrs.selectMultiple === '' || Number(iAttrs.selectMultiple) === 1);
-        }());
+          else {
+            buf = iAttrs.selectModifiers.split(/,/);
+            if (buf) {
+              angular.forEach(buf, function (modi) {
+                switch (modi) {
+                  case 'ctrl':
+                    config.ctrlModifier = true;
+                    break;
+                  case 'shift':
+                    config.shiftModifier = true;
+                    break;
+                  case 'alt':
+                    config.altModifier = true;
+                    break;
+                }
+              });
+            }
+          }
+        }
+
         config.model = iAttrs.ngSelect;
         config.classExpr = iAttrs.selectClass;
         config.disabledExpr = iAttrs.selectDisabled;
@@ -264,6 +391,12 @@ function NgSelectCtrl($scope,   $parse) {
             ctrl.render();
           }
         }, true);
+
+        iElm.bind('$destroy', function () {
+          ctrl.recycle();
+
+          iElm.unbind('$destroy');
+        });
       }
     }
   };
@@ -290,10 +423,11 @@ function NgSelectCtrl($scope,   $parse) {
       _initExprs(ngSelectCtrl.getConfig());
 
       // listen for directive destroy
-      scope.$on('$destroy', function () {
+      iElm.bind('$destroy', function () {
         if (angular.isDefined(optionObj)) {
           ngSelectCtrl.removeOption(optionObj);
         }
+        iElm.unbind('$destroy');
       });
 
       // ng-select-option ready
@@ -308,7 +442,8 @@ function NgSelectCtrl($scope,   $parse) {
               if (!disabledExpr || !_isDisabled(disabledExpr, optionObj)) {
                 scope.$apply(function () {
                   // triggering select/unselect modifies optionObj
-                  ngSelectCtrl[optionObj.selected ? 'unselect' : 'select'](optionObj);
+                  // ngSelectCtrl[optionObj.selected ? 'unselect' : 'select'](optionObj);
+                  ngSelectCtrl.handleClick(optionObj);
                 });
               }
               return false;

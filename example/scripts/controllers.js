@@ -6,7 +6,7 @@ function ($scope,   $location,   $templateCache) {
 
   $scope.linkList = [
     '/ng-select', '/select-class', '/select-style', '/select-disabled',
-    '/select-multiple'
+    '/select-multiple', '/select-modifiers'
   ];
 
   // $scope.title = titleMap[key];
