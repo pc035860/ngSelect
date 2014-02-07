@@ -47,8 +47,15 @@ function NgSelectCtrl($scope,   $parse) {
     var optionObj = {
       index: _optionIndex++,
       value: value,
-      selected: (value == ctrl.getModel())
+      selected: false
     };
+
+    if (_config.multiple) {
+      optionObj.selected = (ctrl.getModel().indexOf(value) >= 0);
+    }
+    else {
+      optionObj.selected = (value == ctrl.getModel());
+    }
 
     _options.push(optionObj);
     return optionObj;
