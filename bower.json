@@ -1,5 +1,6 @@
 {
   "name": "ngSelect",
+  "version": "0.1.1",
   "description": "An AngularJS module that transforms any HTML element on the page to selectable components.",
   "main": "ngSelect.js",
   "ignore": [
