@@ -42,8 +42,6 @@ function NgSelectCtrl($scope,   $parse) {
   };
 
   ctrl.addOption = function (value) {
-    value = _isNumeric(value) ? Number(value) : value;
-
     var optionObj = {
       index: _optionIndex++,
       value: value,
@@ -62,7 +60,7 @@ function NgSelectCtrl($scope,   $parse) {
   };
 
   ctrl.updateOption = function (optionObj, newValue) {
-    optionObj.value = _isNumeric(newValue) ? Number(newValue) : newValue;
+    optionObj.value = newValue;
 
     _updateModel();
   };
@@ -192,9 +190,9 @@ function NgSelectCtrl($scope,   $parse) {
 //    return -1;
 //  }
 
-  function _isNumeric(n) {
-    return !isNaN(parseFloat(n)) && isFinite(n);
-  }
+//  function _isNumeric(n) {
+//    return !isNaN(parseFloat(n)) && isFinite(n);
+//  }
 
   function _updateModel () {
     var selection;
