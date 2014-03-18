@@ -50,13 +50,13 @@ Two-way binding target, the result might be `null` or `[]`(with `select-multiple
 <!-- bind scope.selection to ngSelect model -->
 <div class="row example" ng-select="selection">
   <div class="span12">
-    
+
     <!-- five images with number as option value -->
     <!-- add "selected" class on option selected -->
-    <img class="img-polaroid img-circle" 
-         ng-repeat="num in [1, 2, 3, 4, 5]" 
+    <img class="img-polaroid img-circle"
+         ng-repeat="num in [1, 2, 3, 4, 5]"
          ng-src="http://lorempixel.com/100/100/sports/{{ num }}"
-         ng-select-option="{{ num }}" 
+         ng-select-option="num"
          select-class="{'selected': $optSelected}">
   </div>
 </div>
@@ -65,7 +65,7 @@ Two-way binding target, the result might be `null` or `[]`(with `select-multiple
 ### ng-select-option
 Require directive: `^ng-select` (means there must be an `ng-select` in parent elements)
 
-Type: `string`
+Type: `expression`
 Default: `undefined`
 
 Provides selection value for the model specified in `ng-select`.
@@ -90,16 +90,16 @@ Provides the exact same functionality as <code>ng-class</code>, but with the add
 <!-- bind scope.selection to ngSelect model -->
 <!-- add "selected" class on option selected -->
 <div class="row example"
-     ng-select="selection" 
+     ng-select="selection"
      select-class="{'selected': $optSelected}">
 
   <div class="span12">
-    
+
     <!-- five images with number as option value -->
-    <img class="img-polaroid img-circle" 
-         ng-repeat="num in [1, 2, 3, 4, 5]" 
+    <img class="img-polaroid img-circle"
+         ng-repeat="num in [1, 2, 3, 4, 5]"
          ng-src="http://lorempixel.com/100/100/sports/{{ num }}"
-         ng-select-option="{{ num }}">
+         ng-select-option="num">
   </div>
 </div>
 ```
@@ -119,18 +119,18 @@ Provides the exact same functionality as <code>ng-style</code>, but with the add
 
 <!-- bind scope.selection to ngSelect model -->
 <!-- style the options' opacity with their value -->
-<div class="row example" 
-     ng-select="selection" 
+<div class="row example"
+     ng-select="selection"
      select-style="{'opacity': 0.2 * $optValue}">
 
   <div class="span12">
-    
+
     <!-- five images with number as option value -->
     <!-- add "selected" class on option selected -->
-    <img class="img-polaroid img-circle" 
-         ng-repeat="num in [1, 2, 3, 4, 5]" 
+    <img class="img-polaroid img-circle"
+         ng-repeat="num in [1, 2, 3, 4, 5]"
          ng-src="http://lorempixel.com/100/100/sports/{{ num }}"
-         ng-select-option="{{ num }}"
+         ng-select-option="num"
          select-class="{'selected': $optSelected}">
   </div>
 </div>
@@ -149,31 +149,31 @@ Disables the interactivity of options if the expression is evaluated to be `true
 <p class="lead">
   <!-- display of selection -->
   selection: {{ selection }}
-  
+
   <!-- button for enabling select behavior -->
-  <button class="btn btn-danger btn-large" 
+  <button class="btn btn-danger btn-large"
           ng-show="!disabled" ng-click="disabled = true">disable</button>
 
   <!-- button for disabling select behavior -->
-  <button class="btn btn-success btn-large" 
+  <button class="btn btn-success btn-large"
           ng-show="disabled" ng-click="disabled = false">enable</button>
 </p>
 
 <!-- bind scope.selection to ngSelect model -->
 <!-- the thrid and fifth options are always disabled -->
 <!-- all options are disabled when scope.disabled == true -->
-<div class="row example" 
-     ng-select="selection" 
+<div class="row example"
+     ng-select="selection"
      select-disabled="disabled || ($optIndex == 2 || $optIndex == 4)">
 
   <div class="span12">
 
     <!-- five images with number as option value -->
     <!-- add "selected" class on option selected -->
-    <img class="img-polaroid img-circle" 
-         ng-repeat="num in [1, 2, 3, 4, 5]" 
+    <img class="img-polaroid img-circle"
+         ng-repeat="num in [1, 2, 3, 4, 5]"
          ng-src="http://lorempixel.com/100/100/sports/{{ num }}"
-         ng-select-option="{{ num }}" 
+         ng-select-option="num"
          select-class="{'selected': $optSelected}">
   </div>
 </div>
@@ -195,18 +195,18 @@ Enables `ng-select` to support multiple selection, of which the model binded wil
 <!-- bind scope.selection to ngSelect model -->
 <!-- add "selected" class on option selected -->
 <!-- enable multiple selection -->
-<div class="row example multiple" 
-     ng-select="selection" 
-     select-class="{'selected': $optSelected}" 
+<div class="row example multiple"
+     ng-select="selection"
+     select-class="{'selected': $optSelected}"
      select-multiple>
 
   <div class="span12">
 
     <!-- five images with number as option value -->
-    <img class="img-polaroid img-circle" 
-         ng-repeat="num in [1, 2, 3, 4, 5]" 
+    <img class="img-polaroid img-circle"
+         ng-repeat="num in [1, 2, 3, 4, 5]"
          ng-src="http://lorempixel.com/100/100/sports/{{ num }}"
-         ng-select-option="{{ num }}">
+         ng-select-option="num">
   </div>
 </div>
 ```

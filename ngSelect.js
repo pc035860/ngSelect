@@ -182,15 +182,15 @@ function NgSelectCtrl($scope,   $parse) {
     }
   };
 
-  function _findOptionIndexByValue(list, value) {
-    var i, l = list.length;
-    for (i = 0; i < l; i++) {
-      if (list[i].value == value) {
-        return i;
-      }
-    }
-    return -1;
-  }
+//  function _findOptionIndexByValue(list, value) {
+//    var i, l = list.length;
+//    for (i = 0; i < l; i++) {
+//      if (list[i].value == value) {
+//        return i;
+//      }
+//    }
+//    return -1;
+//  }
 
   function _isNumeric(n) {
     return !isNaN(parseFloat(n)) && isFinite(n);
@@ -319,7 +319,7 @@ function NgSelectCtrl($scope,   $parse) {
         if (angular.isDefined(newVal) && newVal !== oldVal) {
           if (angular.isUndefined(optionObj)) {
             // first time setup option
-            optionObj = ngSelectCtrl.addOption(newVal);
+            optionObj = ngSelectCtrl.addOption(scope.$eval(newVal));
 
             // bind click event
             iElm.bind('click', function () {
