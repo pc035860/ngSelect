@@ -138,23 +138,34 @@ function NgSelectCtrl($scope,   $parse) {
     }
 
     if (_config.multiple) {
-      var selection = angular.copy(ctrl.getModel()),
-          // shallow copy for optionObj reference
-          optionsCopy = angular.extend([], _options),
-          l = selection.length,
-          val, foundOption;
-      // select matched options
-      while (l--) {
-        val = selection.shift();
-        foundOption = optionsCopy.splice(_findOptionIndexByValue(optionsCopy, val), 1)[0];
-        if (foundOption) {
-          foundOption.selected = true;
+      var selection = ctrl.getModel();
+      angular.forEach(_options, function(optionsObj) {
+        var option_selected = false;
+        for (var i = 0; i < selection.length; i++) {
+          if (selection[i] === optionsObj.value) {
+            option_selected = true;
+            break;
+          }
         }
-      }
-      // unselect not matched options
-      angular.forEach(optionsCopy, function (option) {
-        option.selected = false;
+        optionsObj.selected = option_selected;
       });
+//      var selection = angular.copy(ctrl.getModel()),
+//          // shallow copy for optionObj reference
+//          optionsCopy = angular.extend([], _options),
+//          l = selection.length,
+//          val, foundOption;
+//      // select matched options
+//      while (l--) {
+//        val = selection.shift();
+//        foundOption = optionsCopy.splice(_findOptionIndexByValue(optionsCopy, val), 1)[0];
+//        if (foundOption) {
+//          foundOption.selected = true;
+//        }
+//      }
+//      // unselect not matched options
+//      angular.forEach(optionsCopy, function (option) {
+//        option.selected = false;
+//      });
     }
     else {
       var found = false;
@@ -243,7 +254,7 @@ function NgSelectCtrl($scope,   $parse) {
     link: {
       pre: function preLink(scope, iElm, iAttrs, ctrl) {
         var config = {};
-        
+
         // judge multiple
         config.multiple = (function () {
           if (angular.isUndefined(iAttrs.selectMultiple)) {
@@ -309,7 +320,7 @@ function NgSelectCtrl($scope,   $parse) {
           if (angular.isUndefined(optionObj)) {
             // first time setup option
             optionObj = ngSelectCtrl.addOption(newVal);
-      
+
             // bind click event
             iElm.bind('click', function () {
               if (!disabledExpr || !_isDisabled(disabledExpr, optionObj)) {
