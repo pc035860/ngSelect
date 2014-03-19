@@ -261,7 +261,7 @@ function NgSelectCtrl($scope) {
 
             // bind click event
             iElm.bind('click', function () {
-              if (!disabledExpr || !_isDisabled(disabledExpr, optionObj)) {
+              if (!_isDisabled(optionObj)) {
                 scope.$apply(function () {
                   // triggering select/unselect modifies optionObj
                   ngSelectCtrl[optionObj.selected ? 'unselect' : 'select'](optionObj);
@@ -272,12 +272,12 @@ function NgSelectCtrl($scope) {
 
             // watch for select-class evaluation
             scope.$watch(function (scope) {
-              return scope.$eval(classExpr, _getExprLocals(optionObj));
+              return scope.$eval(classExpr, _getStyleExprLocals(optionObj));
             }, _updateClass, true);
 
             // watch for select-style evaluation
             scope.$watch(function (scope) {
-              return scope.$eval(styleExpr, _getExprLocals(optionObj));
+              return scope.$eval(styleExpr, _getStyleExprLocals(optionObj));
             }, _updateStyle, true);
           }
           else {
@@ -287,13 +287,13 @@ function NgSelectCtrl($scope) {
         }
       });
 
-      function _initExprs (ctrlConfig) {
+      function _initExprs(ctrlConfig) {
         classExpr = iAttrs.selectClass || ctrlConfig.classExpr;
         disabledExpr = iAttrs.selectDisabled || ctrlConfig.disabledExpr;
         styleExpr = iAttrs.selectStyle || ctrlConfig.styleExpr;
       }
 
-      function _getExprLocals(optionObj) {
+      function _getBaseExprLocals(optionObj) {
         var locals = {},
             capitalize = function (str) {
               str = str.toLowerCase();
@@ -305,8 +305,14 @@ function NgSelectCtrl($scope) {
         return locals;
       }
 
-      function _isDisabled(disabledExpr, optionObj) {
-        return scope.$eval(disabledExpr, _getExprLocals(optionObj));
+      function _getStyleExprLocals(optionObj) {
+        var locals = _getBaseExprLocals(optionObj);
+        locals['$optDisabled'] = _isDisabled(optionObj);
+        return locals;
+      }
+
+      function _isDisabled(optionObj) {
+        return disabledExpr && scope.$eval(disabledExpr, _getBaseExprLocals(optionObj));
       }
 
       function _updateStyle(newStyles, oldStyles) {
