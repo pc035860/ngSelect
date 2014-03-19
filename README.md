@@ -74,6 +74,7 @@ Special properties are exposed on the local scope of each `ng-select-option` ins
 * `$optIndex` - {number} - unique index of the option
 * `$optValue` - {*} - value of the option
 * `$optSelected` - {boolean} - whether the option is selected
+* `$optDisabled` - {boolean} - whether the option is disabled
 
 #### select-class (optional)
 Require directive: `ng-select` or `ng-select-option`
@@ -144,6 +145,7 @@ Type: `expression`
 Default: `undefined`
 
 Disables the interactivity of options if the expression is evaluated to be `true`. The evaluation has the access to the additional local scope with `$optIndex`, `$optValue`, `$optSelected` varaibles to increase the usage flexibility. This optional directive is applicable to `ng-select` as global configuration and also applicable to `ng-select-option` as local configuration.
+`select-disabled` expression can't use `$optDisabled` for obvious recursion reasons.
 
 [Live Example](http://pc035860.github.io/ngSelect/example/#/select-disabled)
 ```html
@@ -170,12 +172,12 @@ Disables the interactivity of options if the expression is evaluated to be `true
   <div class="span12">
 
     <!-- five images with number as option value -->
-    <!-- add "selected" class on option selected -->
+    <!-- add "selected" class on selected option and "disabled" class on disabled option -->
     <img class="img-polaroid img-circle"
          ng-repeat="num in [1, 2, 3, 4, 5]"
          ng-src="http://lorempixel.com/100/100/sports/{{ num }}"
          ng-select-option="num"
-         select-class="{'selected': $optSelected}">
+         select-class="{'selected': $optSelected, 'disabled':$optDisabled}">
   </div>
 </div>
 ```
