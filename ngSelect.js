@@ -307,7 +307,7 @@ function NgSelectCtrl($scope) {
 
       function _getStyleExprLocals(optionObj) {
         var locals = _getBaseExprLocals(optionObj);
-        locals['$optDisabled'] = _isDisabled(optionObj);
+        locals.$optDisabled = _isDisabled(optionObj);
         return locals;
       }
 
