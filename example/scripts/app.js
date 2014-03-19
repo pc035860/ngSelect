@@ -40,7 +40,6 @@ angular.module('exampleApp').directive('exampleOdd', function(){
           return modelValue;
         }
       });
-
     }
   }
 });
