@@ -15,13 +15,13 @@
 <!-- bind scope.selection to ngSelect model -->
 <div class="row example" ng-select="selection">
   <div class="span12">
-    
+
     <!-- five images with number as option value -->
     <!-- add "selected" class on option selected -->
-    <img class="img-polaroid img-circle" 
-         ng-repeat="num in [1, 2, 3, 4, 5]" 
+    <img class="img-polaroid img-circle"
+         ng-repeat="num in [1, 2, 3, 4, 5]"
          ng-src="http://lorempixel.com/100/100/sports/{{ num }}"
-         ng-select-option="{{ num }}" 
+         ng-select-option="num"
          select-class="{'selected': $optSelected}">
   </div>
 </div>

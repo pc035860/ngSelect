@@ -42,8 +42,6 @@ function NgSelectCtrl($scope,   $parse) {
   };
 
   ctrl.addOption = function (value) {
-    value = _isNumeric(value) ? Number(value) : value;
-
     var optionObj = {
       index: _optionIndex++,
       value: value,
@@ -62,7 +60,7 @@ function NgSelectCtrl($scope,   $parse) {
   };
 
   ctrl.updateOption = function (optionObj, newValue) {
-    optionObj.value = _isNumeric(newValue) ? Number(newValue) : newValue;
+    optionObj.value = newValue;
 
     _updateModel();
   };
@@ -138,22 +136,16 @@ function NgSelectCtrl($scope,   $parse) {
     }
 
     if (_config.multiple) {
-      var selection = angular.copy(ctrl.getModel()),
-          // shallow copy for optionObj reference
-          optionsCopy = angular.extend([], _options),
-          l = selection.length,
-          val, foundOption;
-      // select matched options
-      while (l--) {
-        val = selection.shift();
-        foundOption = optionsCopy.splice(_findOptionIndexByValue(optionsCopy, val), 1)[0];
-        if (foundOption) {
-          foundOption.selected = true;
+      var selection = ctrl.getModel();
+      angular.forEach(_options, function(optionsObj) {
+        var option_selected = false;
+        for (var i = 0; i < selection.length; i++) {
+          if (selection[i] === optionsObj.value) {
+            option_selected = true;
+            break;
+          }
         }
-      }
-      // unselect not matched options
-      angular.forEach(optionsCopy, function (option) {
-        option.selected = false;
+        optionsObj.selected = option_selected;
       });
     }
     else {
@@ -170,20 +162,6 @@ function NgSelectCtrl($scope,   $parse) {
       });
     }
   };
-
-  function _findOptionIndexByValue(list, value) {
-    var i, l = list.length;
-    for (i = 0; i < l; i++) {
-      if (list[i].value == value) {
-        return i;
-      }
-    }
-    return -1;
-  }
-
-  function _isNumeric(n) {
-    return !isNaN(parseFloat(n)) && isFinite(n);
-  }
 
   function _updateModel () {
     var selection;
@@ -243,7 +221,7 @@ function NgSelectCtrl($scope,   $parse) {
     link: {
       pre: function preLink(scope, iElm, iAttrs, ctrl) {
         var config = {};
-        
+
         // judge multiple
         config.multiple = (function () {
           if (angular.isUndefined(iAttrs.selectMultiple)) {
@@ -308,8 +286,8 @@ function NgSelectCtrl($scope,   $parse) {
         if (angular.isDefined(newVal) && newVal !== oldVal) {
           if (angular.isUndefined(optionObj)) {
             // first time setup option
-            optionObj = ngSelectCtrl.addOption(newVal);
-      
+            optionObj = ngSelectCtrl.addOption(scope.$eval(newVal));
+
             // bind click event
             iElm.bind('click', function () {
               if (!disabledExpr || !_isDisabled(disabledExpr, optionObj)) {
