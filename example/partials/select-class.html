@@ -9,10 +9,10 @@
 <!-- display of selection -->
 <p class="lead">selection: {{ selection }}</p>
 
-<!-- bind scope.selection to ngSelect model -->
+<!-- bind scope.selection to ngModel and enable ngSelect -->
 <!-- add "selected" class on option selected -->
 <div class="row example"
-     ng-select="selection"
+     ng-select ng-model="selection"
      select-class="{'selected': $optSelected}">
 
   <div class="span12">

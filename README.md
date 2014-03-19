@@ -35,10 +35,11 @@ bower install ngSelect
 ## Usage
 
 ### ng-select
-Type: `scope varaible`
+Require directive: `ngModel` (means there must be an `ng-model` directive at the same element)
+Type: `boolean`
 Default: `undefined`
 
-Two-way binding target, the result might be `null` or `[]`(with `select-multiple`). The model will receive the value from `ng-select-option`.
+Enables selection logic for model in `ngModel`
 
 [Live Example](http://pc035860.github.io/ngSelect/example/#/ng-select)
 ```html
@@ -47,8 +48,8 @@ Two-way binding target, the result might be `null` or `[]`(with `select-multiple
   selection: <input type="text" ng-model="selection">
 </p>
 
-<!-- bind scope.selection to ngSelect model -->
-<div class="row example" ng-select="selection">
+<!-- bind scope.selection to ngModel and enable ngSelect -->
+<div class="row example" ng-select ng-model="selection">
   <div class="span12">
 
     <!-- five images with number as option value -->
@@ -87,10 +88,10 @@ Provides the exact same functionality as <code>ng-class</code>, but with the add
 <!-- display of selection -->
 <p class="lead">selection: {{ selection }}</p>
 
-<!-- bind scope.selection to ngSelect model -->
+<!-- bind scope.selection to ngModel and enable ngSelect -->
 <!-- add "selected" class on option selected -->
 <div class="row example"
-     ng-select="selection"
+     ng-select ng-model="selection"
      select-class="{'selected': $optSelected}">
 
   <div class="span12">
@@ -117,10 +118,10 @@ Provides the exact same functionality as <code>ng-style</code>, but with the add
 <!-- display of selection -->
 <p class="lead">selection: {{ selection }}</p>
 
-<!-- bind scope.selection to ngSelect model -->
+<!-- bind scope.selection to ngModel and enable ngSelect -->
 <!-- style the options' opacity with their value -->
 <div class="row example"
-     ng-select="selection"
+     ng-select ng-model="selection"
      select-style="{'opacity': 0.2 * $optValue}">
 
   <div class="span12">
@@ -159,11 +160,11 @@ Disables the interactivity of options if the expression is evaluated to be `true
           ng-show="disabled" ng-click="disabled = false">enable</button>
 </p>
 
-<!-- bind scope.selection to ngSelect model -->
+<!-- bind scope.selection to ngModel and enable ngSelect -->
 <!-- the thrid and fifth options are always disabled -->
 <!-- all options are disabled when scope.disabled == true -->
 <div class="row example"
-     ng-select="selection"
+     ng-select ng-model="selection"
      select-disabled="disabled || ($optIndex == 2 || $optIndex == 4)">
 
   <div class="span12">
@@ -192,11 +193,11 @@ Enables `ng-select` to support multiple selection, of which the model binded wil
 <!-- display of selection -->
 <p class="lead">selection: {{ selection }}</p>
 
-<!-- bind scope.selection to ngSelect model -->
+<!-- bind scope.selection to ngModel and enable ngSelect -->
 <!-- add "selected" class on option selected -->
 <!-- enable multiple selection -->
 <div class="row example multiple"
-     ng-select="selection"
+     ng-select ng-model="selection"
      select-class="{'selected': $optSelected}"
      select-multiple>
 
@@ -209,6 +210,61 @@ Enables `ng-select` to support multiple selection, of which the model binded wil
          ng-select-option="num">
   </div>
 </div>
+```
+
+#### Example usage with ngModel validations
+
+[Live Example](http://pc035860.github.io/ngSelect/example/#/with-ngModel-validation)
+```html
+<!-- display of selection -->
+<p class="lead">selection: {{ selection }}</p>
+
+<!-- bind scope.selection to ngModel and enable ngSelect -->
+<!-- set custom validation to match only odd values -->
+<div class="row example"
+     ng-select ng-model="selection"
+     example-odd>
+
+  <div class="span12">
+
+    <!-- five images with number as option value -->
+    <!-- add "selected" class on option selected -->
+    <img class="img-polaroid img-circle"
+         ng-repeat="num in [1, 2, 3, 4, 5]"
+         ng-src="http://lorempixel.com/100/100/sports/{{ num }}"
+         ng-select-option="num"
+         select-class="{'selected': $optSelected}">
+  </div>
+</div>
+```
+
+Custom validator source code: (see [Angular forms manual](http://docs.angularjs.org/guide/forms) for explanations.)
+```javascript
+angular.module('exampleApp').directive('exampleOdd', function(){
+  return {
+    require: 'ngModel',
+    link: function(scope, el, attrs, ngModelCtrl) {
+      ngModelCtrl.$parsers.push(function(viewValue) {
+        if (parseInt(viewValue) % 2 == 0) {
+          ngModelCtrl.$setValidity('exampleOdd', false);
+          return undefined;
+        } else {
+          ngModelCtrl.$setValidity('exampleOdd', true);
+          return viewValue;
+        }
+      });
+      ngModelCtrl.$formatters.push(function(modelValue) {
+        if (modelValue % 2 == 0) {
+          ngModelCtrl.$setValidity('exampleOdd', false);
+          return undefined;
+        } else {
+          ngModelCtrl.$setValidity('exampleOdd', true);
+          return modelValue;
+        }
+      });
+    }
+  }
+});
 ```
 
 ## Note

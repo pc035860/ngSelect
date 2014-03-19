@@ -1,34 +1,25 @@
 angular.module('ngSelect', [])
 
 .controller('NgSelectCtrl', [
-                     '$scope', '$parse',
-function NgSelectCtrl($scope,   $parse) {
+                     '$scope',
+function NgSelectCtrl($scope) {
   var ctrl = this;
 
   var _optionIndex = 0,
       _config,
       _options = [],
-      _modelGetter,
+      _ngModel,
       // leftover render
       _dirty = false;
 
-  ctrl.init = function (config) {
-    if (angular.isUndefined(config.model)) {
-      throw new Error('ngSelect model is required');
-    }
-
+  ctrl.init = function (ngModel, config) {
     config = angular.extend({
       multiple: false
     }, config);
 
-    _config = angular.copy(config);
-    _modelGetter = $parse(config.model);
-
-    // initialize model
-    var model = ctrl.getModel();
-    if (angular.isUndefined(model)) {
-      ctrl.setModel(_config.multiple ? [] : null);
-    }
+    _config = config;
+    _ngModel = ngModel;
+    _ngModel.$render = ctrl.render;
 
     if (_dirty) {
       // needs immediate render
@@ -49,7 +40,10 @@ function NgSelectCtrl($scope,   $parse) {
     };
 
     if (_config.multiple) {
-      optionObj.selected = (ctrl.getModel().indexOf(value) >= 0);
+      var model = ctrl.getModel();
+      if (angular.isArray(model)) {
+        optionObj.selected = (ctrl.getModel().indexOf(value) >= 0);
+      }
     }
     else {
       optionObj.selected = (value == ctrl.getModel());
@@ -120,12 +114,11 @@ function NgSelectCtrl($scope,   $parse) {
   };
 
   ctrl.setModel = function (val) {
-    var setter = _modelGetter.assign;
-    setter($scope, val);
+    _ngModel.$setViewValue(val);
   };
 
   ctrl.getModel = function () {
-    return _modelGetter($scope);
+    return _ngModel.$modelValue;
   };
 
   ctrl.render = function () {
@@ -167,14 +160,11 @@ function NgSelectCtrl($scope,   $parse) {
     var selection;
 
     if (_config.multiple) {
-      var createArray = false;
       // update model with reference
       selection = ctrl.getModel();
       if (!angular.isArray(selection)) {
-        createArray = true;
         selection = [];
-      }
-      else {
+      } else {
         selection.length = 0;
       }
       angular.forEach(_options, function (option) {
@@ -182,10 +172,6 @@ function NgSelectCtrl($scope,   $parse) {
           selection.push(option.value);
         }
       });
-
-      if (createArray) {
-        ctrl.setModel(selection);
-      }
     }
     else {
       selection = null;
@@ -198,8 +184,9 @@ function NgSelectCtrl($scope,   $parse) {
           break;
         }
       }
-      ctrl.setModel(selection);
     }
+
+    ctrl.setModel(selection);
   }
 }])
 
@@ -207,49 +194,33 @@ function NgSelectCtrl($scope,   $parse) {
  * @ngdoc directive
  * @description transform any dom elements to selectable object - container
  *
- * @param {expr}    ng-select        model
+ * @param {boolean} ng-select        enable/disable selection logic for appropriate ngModel.
  * @param {expr}    select-class     general class control with vars ($optIndex, $optValue, $optSelected) (optional)
  * @param {boolean} select-multiple  enable multiple selection (optional)
  * @param {expr}    select-disabled  enable/disable selection with expression, available vars ($optIndex, $optValue, $optSelected) (optional)
  * @param {expr}    select-style     general style control with vars ($optIndex, $optValue, $optSelected) (optional)
  */
 .directive('ngSelect', [function () {
-  // Runs during compile
   return {
     restrict: 'A',
     controller: 'NgSelectCtrl',
-    link: {
-      pre: function preLink(scope, iElm, iAttrs, ctrl) {
-        var config = {};
+    require: 'ngModel',
+    link: function (scope, iElm, iAttrs, ngModelCtrl) {
+      var ctrl = iElm.data('$ngSelectController');
+      var config = {};
 
-        // judge multiple
-        config.multiple = (function () {
-          if (angular.isUndefined(iAttrs.selectMultiple)) {
-            return false;
-          }
-          return (iAttrs.selectMultiple === '' || Number(iAttrs.selectMultiple) === 1);
-        }());
-        config.model = iAttrs.ngSelect;
-        config.classExpr = iAttrs.selectClass;
-        config.disabledExpr = iAttrs.selectDisabled;
-        config.styleExpr = iAttrs.selectStyle;
+      // judge multiple
+      config.multiple = (function () {
+        if (angular.isUndefined(iAttrs.selectMultiple)) {
+          return false;
+        }
+        return (iAttrs.selectMultiple === '' || Number(iAttrs.selectMultiple) === 1);
+      }());
+      config.classExpr = iAttrs.selectClass;
+      config.disabledExpr = iAttrs.selectDisabled;
+      config.styleExpr = iAttrs.selectStyle;
 
-        ctrl.init(config);
-
-        // controller connection
-        // iAttrs.$observe('ngSelectCtrl', function (val) {
-        //   if (angular.isDefined(val)) {
-        //     var assignFunc = $parse(val).assign;
-        //     assignFunc(scope, ctrl);
-        //   }
-        // });
-
-        scope.$watch(iAttrs.ngSelect, function (newVal, oldVal) {
-          if (angular.isDefined(newVal) && newVal !== oldVal) {
-            ctrl.render();
-          }
-        }, true);
-      }
+      ctrl.init(ngModelCtrl, config);
     }
   };
 }])

@@ -21,11 +21,11 @@
           ng-show="disabled" ng-click="disabled = false">enable</button>
 </p>
 
-<!-- bind scope.selection to ngSelect model -->
+<!-- bind scope.selection to ngModel and enable ngSelect -->
 <!-- the thrid and fifth options are always disabled -->
 <!-- all options are disabled when scope.disabled == true -->
 <div class="row example"
-     ng-select="selection"
+     ng-select ng-model="selection"
      select-disabled="disabled || ($optIndex == 2 || $optIndex == 4)">
 
   <div class="span12">

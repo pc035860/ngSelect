@@ -1,19 +1,19 @@
-<h3>ng-select, ng-select-option</h3>
+<h3>Synergy with ngModel validation</h3>
 <blockquote>
-  Two-way binding between <code>ng-select</code> model and <code>ng-select-option</code> values.
-  <br><br>
-  Click on images to change the selection. <br>
-  Modify the selection to see the image reaction.
+    This example shows one of possible way you can benefit from using ng-select with ng-model.
+    In this example all even values are treated as invalid.
 </blockquote>
 <hr>
 
-<!-- setup selection display/input input:text -->
-<p class="lead">
-  selection: <input type="text" ng-model="selection">
-</p>
+<!-- display of selection -->
+<p class="lead">selection: {{ selection }}</p>
 
 <!-- bind scope.selection to ngModel and enable ngSelect -->
-<div class="row example" ng-select ng-model="selection">
+<!-- set custom validation to match only odd values -->
+<div class="row example"
+     ng-select ng-model="selection"
+     example-odd>
+
   <div class="span12">
 
     <!-- five images with number as option value -->
