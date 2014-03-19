@@ -1,34 +1,25 @@
 angular.module('ngSelect', [])
 
 .controller('NgSelectCtrl', [
-                     '$scope', '$parse',
-function NgSelectCtrl($scope,   $parse) {
+                     '$scope',
+function NgSelectCtrl($scope) {
   var ctrl = this;
 
   var _optionIndex = 0,
       _config,
       _options = [],
-      _modelGetter,
+      _ngModel,
       // leftover render
       _dirty = false;
 
-  ctrl.init = function (config) {
-    if (angular.isUndefined(config.model)) {
-      throw new Error('ngSelect model is required');
-    }
-
+  ctrl.init = function (ngModel, config) {
     config = angular.extend({
       multiple: false
     }, config);
 
-    _config = angular.copy(config);
-    _modelGetter = $parse(config.model);
-
-    // initialize model
-    var model = ctrl.getModel();
-    if (angular.isUndefined(model)) {
-      ctrl.setModel(_config.multiple ? [] : null);
-    }
+    _config = config;
+    _ngModel = ngModel;
+    _ngModel.$render = ctrl.render;
 
     if (_dirty) {
       // needs immediate render
@@ -42,8 +33,6 @@ function NgSelectCtrl($scope,   $parse) {
   };
 
   ctrl.addOption = function (value) {
-    value = _isNumeric(value) ? Number(value) : value;
-
     var optionObj = {
       index: _optionIndex++,
       value: value,
@@ -51,7 +40,10 @@ function NgSelectCtrl($scope,   $parse) {
     };
 
     if (_config.multiple) {
-      optionObj.selected = (ctrl.getModel().indexOf(value) >= 0);
+      var model = ctrl.getModel();
+      if (angular.isArray(model)) {
+        optionObj.selected = (ctrl.getModel().indexOf(value) >= 0);
+      }
     }
     else {
       optionObj.selected = (value == ctrl.getModel());
@@ -62,7 +54,7 @@ function NgSelectCtrl($scope,   $parse) {
   };
 
   ctrl.updateOption = function (optionObj, newValue) {
-    optionObj.value = _isNumeric(newValue) ? Number(newValue) : newValue;
+    optionObj.value = newValue;
 
     _updateModel();
   };
@@ -122,12 +114,11 @@ function NgSelectCtrl($scope,   $parse) {
   };
 
   ctrl.setModel = function (val) {
-    var setter = _modelGetter.assign;
-    setter($scope, val);
+    _ngModel.$setViewValue(val);
   };
 
   ctrl.getModel = function () {
-    return _modelGetter($scope);
+    return _ngModel.$modelValue;
   };
 
   ctrl.render = function () {
@@ -138,22 +129,16 @@ function NgSelectCtrl($scope,   $parse) {
     }
 
     if (_config.multiple) {
-      var selection = angular.copy(ctrl.getModel()),
-          // shallow copy for optionObj reference
-          optionsCopy = angular.extend([], _options),
-          l = selection.length,
-          val, foundOption;
-      // select matched options
-      while (l--) {
-        val = selection.shift();
-        foundOption = optionsCopy.splice(_findOptionIndexByValue(optionsCopy, val), 1)[0];
-        if (foundOption) {
-          foundOption.selected = true;
+      var selection = ctrl.getModel();
+      angular.forEach(_options, function(optionsObj) {
+        var option_selected = false;
+        for (var i = 0; i < selection.length; i++) {
+          if (selection[i] === optionsObj.value) {
+            option_selected = true;
+            break;
+          }
         }
-      }
-      // unselect not matched options
-      angular.forEach(optionsCopy, function (option) {
-        option.selected = false;
+        optionsObj.selected = option_selected;
       });
     }
     else {
@@ -171,32 +156,15 @@ function NgSelectCtrl($scope,   $parse) {
     }
   };
 
-  function _findOptionIndexByValue(list, value) {
-    var i, l = list.length;
-    for (i = 0; i < l; i++) {
-      if (list[i].value == value) {
-        return i;
-      }
-    }
-    return -1;
-  }
-
-  function _isNumeric(n) {
-    return !isNaN(parseFloat(n)) && isFinite(n);
-  }
-
   function _updateModel () {
     var selection;
 
     if (_config.multiple) {
-      var createArray = false;
       // update model with reference
       selection = ctrl.getModel();
       if (!angular.isArray(selection)) {
-        createArray = true;
         selection = [];
-      }
-      else {
+      } else {
         selection.length = 0;
       }
       angular.forEach(_options, function (option) {
@@ -204,10 +172,6 @@ function NgSelectCtrl($scope,   $parse) {
           selection.push(option.value);
         }
       });
-
-      if (createArray) {
-        ctrl.setModel(selection);
-      }
     }
     else {
       selection = null;
@@ -220,8 +184,9 @@ function NgSelectCtrl($scope,   $parse) {
           break;
         }
       }
-      ctrl.setModel(selection);
     }
+
+    ctrl.setModel(selection);
   }
 }])
 
@@ -229,49 +194,33 @@ function NgSelectCtrl($scope,   $parse) {
  * @ngdoc directive
  * @description transform any dom elements to selectable object - container
  *
- * @param {expr}    ng-select        model
+ * @param {boolean} ng-select        enable/disable selection logic for appropriate ngModel.
  * @param {expr}    select-class     general class control with vars ($optIndex, $optValue, $optSelected) (optional)
  * @param {boolean} select-multiple  enable multiple selection (optional)
  * @param {expr}    select-disabled  enable/disable selection with expression, available vars ($optIndex, $optValue, $optSelected) (optional)
  * @param {expr}    select-style     general style control with vars ($optIndex, $optValue, $optSelected) (optional)
  */
 .directive('ngSelect', [function () {
-  // Runs during compile
   return {
     restrict: 'A',
     controller: 'NgSelectCtrl',
-    link: {
-      pre: function preLink(scope, iElm, iAttrs, ctrl) {
-        var config = {};
-        
-        // judge multiple
-        config.multiple = (function () {
-          if (angular.isUndefined(iAttrs.selectMultiple)) {
-            return false;
-          }
-          return (iAttrs.selectMultiple === '' || Number(iAttrs.selectMultiple) === 1);
-        }());
-        config.model = iAttrs.ngSelect;
-        config.classExpr = iAttrs.selectClass;
-        config.disabledExpr = iAttrs.selectDisabled;
-        config.styleExpr = iAttrs.selectStyle;
+    require: 'ngModel',
+    link: function (scope, iElm, iAttrs, ngModelCtrl) {
+      var ctrl = iElm.data('$ngSelectController');
+      var config = {};
 
-        ctrl.init(config);
+      // judge multiple
+      config.multiple = (function () {
+        if (angular.isUndefined(iAttrs.selectMultiple)) {
+          return false;
+        }
+        return (iAttrs.selectMultiple === '' || Number(iAttrs.selectMultiple) === 1);
+      }());
+      config.classExpr = iAttrs.selectClass;
+      config.disabledExpr = iAttrs.selectDisabled;
+      config.styleExpr = iAttrs.selectStyle;
 
-        // controller connection
-        // iAttrs.$observe('ngSelectCtrl', function (val) {
-        //   if (angular.isDefined(val)) {
-        //     var assignFunc = $parse(val).assign;
-        //     assignFunc(scope, ctrl);
-        //   }
-        // });
-
-        scope.$watch(iAttrs.ngSelect, function (newVal, oldVal) {
-          if (angular.isDefined(newVal) && newVal !== oldVal) {
-            ctrl.render();
-          }
-        }, true);
-      }
+      ctrl.init(ngModelCtrl, config);
     }
   };
 }])
@@ -308,11 +257,11 @@ function NgSelectCtrl($scope,   $parse) {
         if (angular.isDefined(newVal) && newVal !== oldVal) {
           if (angular.isUndefined(optionObj)) {
             // first time setup option
-            optionObj = ngSelectCtrl.addOption(newVal);
-      
+            optionObj = ngSelectCtrl.addOption(scope.$eval(newVal));
+
             // bind click event
             iElm.bind('click', function () {
-              if (!disabledExpr || !_isDisabled(disabledExpr, optionObj)) {
+              if (!_isDisabled(optionObj)) {
                 scope.$apply(function () {
                   // triggering select/unselect modifies optionObj
                   ngSelectCtrl[optionObj.selected ? 'unselect' : 'select'](optionObj);
@@ -323,12 +272,12 @@ function NgSelectCtrl($scope,   $parse) {
 
             // watch for select-class evaluation
             scope.$watch(function (scope) {
-              return scope.$eval(classExpr, _getExprLocals(optionObj));
+              return scope.$eval(classExpr, _getStyleExprLocals(optionObj));
             }, _updateClass, true);
 
             // watch for select-style evaluation
             scope.$watch(function (scope) {
-              return scope.$eval(styleExpr, _getExprLocals(optionObj));
+              return scope.$eval(styleExpr, _getStyleExprLocals(optionObj));
             }, _updateStyle, true);
           }
           else {
@@ -338,13 +287,13 @@ function NgSelectCtrl($scope,   $parse) {
         }
       });
 
-      function _initExprs (ctrlConfig) {
+      function _initExprs(ctrlConfig) {
         classExpr = iAttrs.selectClass || ctrlConfig.classExpr;
         disabledExpr = iAttrs.selectDisabled || ctrlConfig.disabledExpr;
         styleExpr = iAttrs.selectStyle || ctrlConfig.styleExpr;
       }
 
-      function _getExprLocals(optionObj) {
+      function _getBaseExprLocals(optionObj) {
         var locals = {},
             capitalize = function (str) {
               str = str.toLowerCase();
@@ -356,8 +305,14 @@ function NgSelectCtrl($scope,   $parse) {
         return locals;
       }
 
-      function _isDisabled(disabledExpr, optionObj) {
-        return scope.$eval(disabledExpr, _getExprLocals(optionObj));
+      function _getStyleExprLocals(optionObj) {
+        var locals = _getBaseExprLocals(optionObj);
+        locals.$optDisabled = _isDisabled(optionObj);
+        return locals;
+      }
+
+      function _isDisabled(optionObj) {
+        return disabledExpr && scope.$eval(disabledExpr, _getBaseExprLocals(optionObj));
       }
 
       function _updateStyle(newStyles, oldStyles) {

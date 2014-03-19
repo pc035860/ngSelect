@@ -11,31 +11,31 @@
 <p class="lead">
   <!-- display of selection -->
   selection: {{ selection }}
-  
+
   <!-- button for enabling select behavior -->
-  <button class="btn btn-danger btn-large" 
+  <button class="btn btn-danger btn-large"
           ng-show="!disabled" ng-click="disabled = true">disable</button>
 
   <!-- button for disabling select behavior -->
-  <button class="btn btn-success btn-large" 
+  <button class="btn btn-success btn-large"
           ng-show="disabled" ng-click="disabled = false">enable</button>
 </p>
 
-<!-- bind scope.selection to ngSelect model -->
+<!-- bind scope.selection to ngModel and enable ngSelect -->
 <!-- the thrid and fifth options are always disabled -->
 <!-- all options are disabled when scope.disabled == true -->
-<div class="row example" 
-     ng-select="selection" 
+<div class="row example"
+     ng-select ng-model="selection"
      select-disabled="disabled || ($optIndex == 2 || $optIndex == 4)">
 
   <div class="span12">
 
     <!-- five images with number as option value -->
-    <!-- add "selected" class on option selected -->
-    <img class="img-polaroid img-circle" 
-         ng-repeat="num in [1, 2, 3, 4, 5]" 
+    <!-- add "selected" class on selected option and "disabled" class on disabled option -->
+    <img class="img-polaroid img-circle"
+         ng-repeat="num in [1, 2, 3, 4, 5]"
          ng-src="http://lorempixel.com/100/100/sports/{{ num }}"
-         ng-select-option="{{ num }}" 
-         select-class="{'selected': $optSelected}">
+         ng-select-option="num"
+         select-class="{'selected': $optSelected, 'disabled':$optDisabled}">
   </div>
 </div>
