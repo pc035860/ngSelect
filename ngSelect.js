@@ -223,20 +223,6 @@ function NgSelectCtrl($scope) {
         config.styleExpr = iAttrs.selectStyle;
 
         ctrl.init(ngModelCtrl, config);
-
-        // controller connection
-        // iAttrs.$observe('ngSelectCtrl', function (val) {
-        //   if (angular.isDefined(val)) {
-        //     var assignFunc = $parse(val).assign;
-        //     assignFunc(scope, ctrl);
-        //   }
-        // });
-
-        scope.$watch(ngModelCtrl.$modelValue, function (newVal, oldVal) {
-          if (angular.isDefined(newVal) && newVal !== oldVal) {
-            ctrl.render();
-          }
-        }, true);
       }
     }
   };
