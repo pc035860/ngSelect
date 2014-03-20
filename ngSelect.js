@@ -13,10 +13,6 @@ function NgSelectCtrl($scope) {
       _dirty = false;
 
   ctrl.init = function (ngModel, config) {
-    config = angular.extend({
-      multiple: false
-    }, config);
-
     _config = config;
     _ngModel = ngModel;
     _ngModel.$render = ctrl.render;
@@ -205,22 +201,24 @@ function NgSelectCtrl($scope) {
     restrict: 'A',
     controller: 'NgSelectCtrl',
     require: 'ngModel',
-    link: function (scope, iElm, iAttrs, ngModelCtrl) {
-      var ctrl = iElm.data('$ngSelectController');
-      var config = {};
+    link: {
+      pre: function (scope, iElm, iAttrs, ngModelCtrl) {
+        var ctrl = iElm.data('$ngSelectController');
+        var config = {};
 
-      // judge multiple
-      config.multiple = (function () {
-        if (angular.isUndefined(iAttrs.selectMultiple)) {
-          return false;
-        }
-        return (iAttrs.selectMultiple === '' || Number(iAttrs.selectMultiple) === 1);
-      }());
-      config.classExpr = iAttrs.selectClass;
-      config.disabledExpr = iAttrs.selectDisabled;
-      config.styleExpr = iAttrs.selectStyle;
+        // judge multiple
+        config.multiple = (function () {
+          if (angular.isUndefined(iAttrs.selectMultiple)) {
+            return false;
+          }
+          return (iAttrs.selectMultiple === '' || Number(iAttrs.selectMultiple) === 1);
+        }());
+        config.classExpr = iAttrs.selectClass;
+        config.disabledExpr = iAttrs.selectDisabled;
+        config.styleExpr = iAttrs.selectStyle;
 
-      ctrl.init(ngModelCtrl, config);
+        ctrl.init(ngModelCtrl, config);
+      }
     }
   };
 }])
