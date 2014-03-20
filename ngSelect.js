@@ -90,10 +90,6 @@ function NgSelectCtrl($scope) {
   };
 
   ctrl.unselect = function (optionObj) {
-    if (!_config.multiple) {
-      return;
-    }
-
     optionObj.selected = false;
 
     _updateModel();
