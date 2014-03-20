@@ -49,12 +49,6 @@ function NgSelectCtrl($scope) {
     return optionObj;
   };
 
-  ctrl.updateOption = function (optionObj, newValue) {
-    optionObj.value = newValue;
-
-    _updateModel();
-  };
-
   ctrl.removeOption = function (optionObj) {
     if (optionObj.selected) {
       ctrl.unselect(optionObj);
@@ -241,7 +235,23 @@ function NgSelectCtrl($scope) {
       var optionObj, disabledExpr, classExpr, styleExpr;
 
       // init expressions
-      _initExprs(ngSelectCtrl.getConfig());
+      var ctrlConfig = ngSelectCtrl.getConfig();
+      classExpr = iAttrs.selectClass || ctrlConfig.classExpr;
+      disabledExpr = iAttrs.selectDisabled || ctrlConfig.disabledExpr;
+      styleExpr = iAttrs.selectStyle || ctrlConfig.styleExpr;
+
+      optionObj = ngSelectCtrl.addOption(scope.$eval(iAttrs.ngSelectOption));
+
+      // bind click event
+      iElm.bind('click', function () {
+        if (!_isDisabled(optionObj)) {
+          scope.$apply(function () {
+            // triggering select/unselect modifies optionObj
+            ngSelectCtrl[optionObj.selected ? 'unselect' : 'select'](optionObj);
+          });
+        }
+        return false;
+      });
 
       // listen for directive destroy
       scope.$on('$destroy', function () {
@@ -250,46 +260,16 @@ function NgSelectCtrl($scope) {
         }
       });
 
-      // ng-select-option ready
-      iAttrs.$observe('ngSelectOption', function (newVal, oldVal) {
-        if (angular.isDefined(newVal) && newVal !== oldVal) {
-          if (angular.isUndefined(optionObj)) {
-            // first time setup option
-            optionObj = ngSelectCtrl.addOption(scope.$eval(newVal));
+      // watch for select-class evaluation
+      scope.$watch(function (scope) {
+        return scope.$eval(classExpr, _getStyleExprLocals(optionObj));
+      }, _updateClass, true);
 
-            // bind click event
-            iElm.bind('click', function () {
-              if (!_isDisabled(optionObj)) {
-                scope.$apply(function () {
-                  // triggering select/unselect modifies optionObj
-                  ngSelectCtrl[optionObj.selected ? 'unselect' : 'select'](optionObj);
-                });
-              }
-              return false;
-            });
+      // watch for select-style evaluation
+      scope.$watch(function (scope) {
+        return scope.$eval(styleExpr, _getStyleExprLocals(optionObj));
+      }, _updateStyle, true);
 
-            // watch for select-class evaluation
-            scope.$watch(function (scope) {
-              return scope.$eval(classExpr, _getStyleExprLocals(optionObj));
-            }, _updateClass, true);
-
-            // watch for select-style evaluation
-            scope.$watch(function (scope) {
-              return scope.$eval(styleExpr, _getStyleExprLocals(optionObj));
-            }, _updateStyle, true);
-          }
-          else {
-            // update option value
-            ngSelectCtrl.updateOption(optionObj, newVal);
-          }
-        }
-      });
-
-      function _initExprs(ctrlConfig) {
-        classExpr = iAttrs.selectClass || ctrlConfig.classExpr;
-        disabledExpr = iAttrs.selectDisabled || ctrlConfig.disabledExpr;
-        styleExpr = iAttrs.selectStyle || ctrlConfig.styleExpr;
-      }
 
       function _getBaseExprLocals(optionObj) {
         var locals = {},
