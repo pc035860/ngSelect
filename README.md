@@ -145,7 +145,6 @@ Type: `expression`
 Default: `undefined`
 
 Disables the interactivity of options if the expression is evaluated to be `true`. The evaluation has the access to the additional local scope with `$optIndex`, `$optValue`, `$optSelected` varaibles to increase the usage flexibility. This optional directive is applicable to `ng-select` as global configuration and also applicable to `ng-select-option` as local configuration.
-`select-disabled` expression can't use `$optDisabled` for obvious recursion reasons.
 
 [Live Example](http://pc035860.github.io/ngSelect/example/#/select-disabled)
 ```html
