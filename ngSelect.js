@@ -270,15 +270,19 @@ function NgSelectCtrl($scope) {
               return false;
             });
 
-            // watch for select-class evaluation
-            scope.$watch(function (scope) {
-              return scope.$eval(classExpr, _getStyleExprLocals(optionObj));
-            }, _updateClass, true);
+            if (angular.isDefined(classExpr)) {
+              // watch for select-class evaluation
+              scope.$watch(function (scope) {
+                return scope.$eval(classExpr, _getStyleExprLocals(optionObj));
+              }, _updateClass, true);
+            }
 
-            // watch for select-style evaluation
-            scope.$watch(function (scope) {
-              return scope.$eval(styleExpr, _getStyleExprLocals(optionObj));
-            }, _updateStyle, true);
+            if (angular.isDefined(styleExpr)) {
+              // watch for select-style evaluation
+              scope.$watch(function (scope) {
+                return scope.$eval(styleExpr, _getStyleExprLocals(optionObj));
+              }, _updateStyle, true);
+            }
           }
           else {
             // update option value
