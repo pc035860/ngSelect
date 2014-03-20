@@ -311,12 +311,19 @@ function NgSelectCtrl($scope) {
 
       function _getStyleExprLocals(optionObj) {
         var locals = _getBaseExprLocals(optionObj);
-        locals.$optDisabled = _isDisabled(optionObj);
+        locals.$optDisabled = _isDisabled(optionObj, locals);
         return locals;
       }
 
-      function _isDisabled(optionObj) {
-        return disabledExpr && scope.$eval(disabledExpr, _getBaseExprLocals(optionObj));
+      function _isDisabled(optionObj, locals) {
+        if (angular.isUndefined(disabledExpr)) {
+          return false;
+        }
+
+        if (angular.isUndefined(locals)) {
+          locals = _getBaseExprLocals(optionObj);
+        }
+        return scope.$eval(disabledExpr, locals);
       }
 
       function _updateStyle(newStyles, oldStyles) {
