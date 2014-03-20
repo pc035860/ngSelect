@@ -36,7 +36,8 @@ function NgSelectCtrl($scope) {
     var optionObj = {
       index: _optionIndex++,
       value: value,
-      selected: false
+      selected: false,
+      disabled: false
     };
 
     if (_config.multiple) {
@@ -261,7 +262,7 @@ function NgSelectCtrl($scope) {
 
             // bind click event
             iElm.bind('click', function () {
-              if (!_isDisabled(optionObj)) {
+              if (!optionObj.disabled) {
                 scope.$apply(function () {
                   // triggering select/unselect modifies optionObj
                   ngSelectCtrl[optionObj.selected ? 'unselect' : 'select'](optionObj);
@@ -270,15 +271,26 @@ function NgSelectCtrl($scope) {
               return false;
             });
 
-            // watch for select-class evaluation
-            scope.$watch(function (scope) {
-              return scope.$eval(classExpr, _getStyleExprLocals(optionObj));
-            }, _updateClass, true);
+            if (angular.isDefined(disabledExpr)) {
+              // watch for select-disabled evaluation
+              scope.$watch(function (scope) {
+                return scope.$eval(disabledExpr, _getExprLocals(optionObj));
+              }, _updateDisabled, true);
+            }
 
-            // watch for select-style evaluation
-            scope.$watch(function (scope) {
-              return scope.$eval(styleExpr, _getStyleExprLocals(optionObj));
-            }, _updateStyle, true);
+            if (angular.isDefined(classExpr)) {
+              // watch for select-class evaluation
+              scope.$watch(function (scope) {
+                return scope.$eval(classExpr, _getExprLocals(optionObj));
+              }, _updateClass, true);
+            }
+
+            if (angular.isDefined(styleExpr)) {
+              // watch for select-style evaluation
+              scope.$watch(function (scope) {
+                return scope.$eval(styleExpr, _getExprLocals(optionObj));
+              }, _updateStyle, true);
+            }
           }
           else {
             // update option value
@@ -293,26 +305,25 @@ function NgSelectCtrl($scope) {
         styleExpr = iAttrs.selectStyle || ctrlConfig.styleExpr;
       }
 
-      function _getBaseExprLocals(optionObj) {
-        var locals = {},
-            capitalize = function (str) {
-              str = str.toLowerCase();
-              return str.charAt(0).toUpperCase() + str.slice(1);
-            };
+      var exprLocalsNames = {},
+          capitalize = function (str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+          };
+
+      function _getExprLocals(optionObj) {
+        var locals = {};
+
         angular.forEach(optionObj, function (value, key) {
-          locals['$opt' + capitalize(key)] = value;
+          if (angular.isUndefined(exprLocalsNames[key])) {
+            exprLocalsNames[key] = '$opt' + capitalize(key);
+          }
+          locals[exprLocalsNames[key]] = value;
         });
         return locals;
       }
 
-      function _getStyleExprLocals(optionObj) {
-        var locals = _getBaseExprLocals(optionObj);
-        locals.$optDisabled = _isDisabled(optionObj);
-        return locals;
-      }
-
-      function _isDisabled(optionObj) {
-        return disabledExpr && scope.$eval(disabledExpr, _getBaseExprLocals(optionObj));
+      function _updateDisabled(newValue) {
+        optionObj.disabled = newValue;
       }
 
       function _updateStyle(newStyles, oldStyles) {
@@ -326,32 +337,33 @@ function NgSelectCtrl($scope) {
         }
       }
 
-      function _updateClass(newClass, oldClass) {
-        var map = function (obj, judgeFn) {
-              var list = [];
-              angular.forEach(obj, function (v, k) {
-                var res = judgeFn(v, k);
-                if (res) {
-                  list.push(res);
-                }
-              });
-              return list;
-            },
-            removeClass = function (classVal) {
-              if (angular.isObject(classVal) && !angular.isArray(classVal)) {
-                classVal = map(classVal, function(v, k) { if (v) { return k; } });
+      //UPDATE CLASS
+      var map = function (obj, judgeFn) {
+            var list = [];
+            angular.forEach(obj, function (v, k) {
+              var res = judgeFn(v, k);
+              if (res) {
+                list.push(res);
               }
-              iElm.removeClass(angular.isArray(classVal) ? classVal.join(' ') : classVal);
-            },
-            addClass = function (classVal) {
-              if (angular.isObject(classVal) && !angular.isArray(classVal)) {
-                classVal = map(classVal, function(v, k) { if (v) { return k; } });
-              }
-              if (classVal) {
-                iElm.addClass(angular.isArray(classVal) ? classVal.join(' ') : classVal);
-              }
-            };
+            });
+            return list;
+          },
+          removeClass = function (classVal) {
+            if (angular.isObject(classVal) && !angular.isArray(classVal)) {
+              classVal = map(classVal, function(v, k) { if (v) { return k; } });
+            }
+            iElm.removeClass(angular.isArray(classVal) ? classVal.join(' ') : classVal);
+          },
+          addClass = function (classVal) {
+            if (angular.isObject(classVal) && !angular.isArray(classVal)) {
+              classVal = map(classVal, function(v, k) { if (v) { return k; } });
+            }
+            if (classVal) {
+              iElm.addClass(angular.isArray(classVal) ? classVal.join(' ') : classVal);
+            }
+          };
 
+      function _updateClass(newClass, oldClass) {
         if (oldClass && !angular.equals(newClass, oldClass)) {
           removeClass(oldClass);
         }
