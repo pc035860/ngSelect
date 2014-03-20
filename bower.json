@@ -1,6 +1,6 @@
 {
   "name": "ngSelect",
-  "version": "0.1.1",
+  "version": "0.2.0-pre",
   "description": "An AngularJS module that transforms any HTML element on the page to selectable components.",
   "main": "ngSelect.js",
   "ignore": [
@@ -14,8 +14,5 @@
     "tests"
   ],
   "dependencies": {},
-  "devDependencies": {
-    "angular": "PatternConsulting/bower-angular#~1.1.5",
-    "angular-highlightjs": "~0.1.1"
-  }
+  "devDependencies": {}
 }

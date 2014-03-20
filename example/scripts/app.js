@@ -1,4 +1,4 @@
-angular.module('exampleApp', ['ngSelect', 'hljs'],
+angular.module('exampleApp', ['ngSelect', 'hljs', 'ngRoute'],
         ['$routeProvider',
 function ($routeProvider) {
 

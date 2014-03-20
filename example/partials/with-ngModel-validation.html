@@ -1,7 +1,7 @@
 <h3>Synergy with ngModel validation</h3>
 <blockquote>
-    This example shows one of possible way you can benefit from using ng-select with ng-model.
-    In this example all even values are treated as invalid.
+  This example shows one of possible way you can benefit from using ng-select with ng-model.
+  In this example all even values are treated as invalid.
 </blockquote>
 <hr>
 
@@ -11,17 +11,14 @@
 <!-- bind scope.selection to ngModel and enable ngSelect -->
 <!-- set custom validation to match only odd values -->
 <div class="row example"
-     ng-select ng-model="selection"
-     example-odd>
+   ng-select ng-model="selection"
+   example-odd>
 
-  <div class="span12">
-
-    <!-- five images with number as option value -->
-    <!-- add "selected" class on option selected -->
-    <img class="img-polaroid img-circle"
-         ng-repeat="num in [1, 2, 3, 4, 5]"
-         ng-src="http://lorempixel.com/100/100/sports/{{ num }}"
-         ng-select-option="num"
-         select-class="{'selected': $optSelected}">
-  </div>
+  <!-- five images with number as option value -->
+  <!-- add "selected" class on option selected -->
+  <img class="img-polaroid img-circle"
+     ng-repeat="num in [1, 2, 3, 4, 5]"
+     ng-src="http://lorempixel.com/100/100/sports/{{ num }}"
+     ng-select-option="num"
+     select-class="{'selected': $optSelected}">
 </div>
