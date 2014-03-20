@@ -1,9 +1,5 @@
 @import "lesshat";
 
-body > .container {
-	position: relative;
-}
-
 pre {
 	padding: 0 .3em;
 	background-color: none;
@@ -14,11 +10,15 @@ pre {
 }
 
 [ng-view] {
-	padding: 0 20px;
-
 	input {
 		font-size: 20px;
+		display: inline-block;
+		max-width: 150px;
 	}
+}
+
+.main {
+	position: relative;
 }
 
 .source-overlay {
@@ -37,20 +37,24 @@ pre {
 	position: absolute;
 	z-index: 10;
 
-	top: 50px;
+	top: 0;
+	width: 100%;
 }
 
 .navbar {
 	position: relative;
 	z-index: 2;
-	.navbar-inner {
+	margin-bottom: 0;
+	border-radius: 0;
+
+	.container {
 		position: relative;
+	}
 
-		.show-source {
-			position: absolute;
+	.show-source {
+		position: absolute;
 
-			right: 10px;
-		}
+		right: 0; top: 7px;
 	}
 }
 
@@ -75,7 +79,7 @@ pre {
 			cursor: pointer !important;
 		}
 	}
-  .disabled {
-    opacity: 0.5;
-  }
+	.disabled {
+		opacity: 0.5;
+	}
 }
