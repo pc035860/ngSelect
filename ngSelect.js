@@ -1,8 +1,6 @@
 angular.module('ngSelect', [])
 
-.controller('NgSelectCtrl', [
-                     '$scope',
-function NgSelectCtrl($scope) {
+.controller('ngSelectController', function () {
   var ctrl = this;
 
   var _optionIndex = 0,
@@ -175,7 +173,7 @@ function NgSelectCtrl($scope) {
 
     ctrl.setModel(selection);
   }
-}])
+})
 
 /**
  * @ngdoc directive
@@ -190,7 +188,7 @@ function NgSelectCtrl($scope) {
 .directive('ngSelect', [function () {
   return {
     restrict: 'A',
-    controller: 'NgSelectCtrl',
+    controller: 'ngSelectController',
     require: 'ngModel',
     link: {
       pre: function (scope, iElm, iAttrs, ngModelCtrl) {
