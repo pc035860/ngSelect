@@ -312,37 +312,34 @@ function NgSelectCtrl($scope) {
       }
 
       //UPDATE CLASS
-      var map = function (obj, judgeFn) {
-            var list = [];
-            angular.forEach(obj, function (v, k) {
-              var res = judgeFn(v, k);
-              if (res) {
-                list.push(res);
-              }
-            });
-            return list;
-          },
-          removeClass = function (classVal) {
-            if (angular.isObject(classVal) && !angular.isArray(classVal)) {
-              classVal = map(classVal, function(v, k) { if (v) { return k; } });
-            }
-            iElm.removeClass(angular.isArray(classVal) ? classVal.join(' ') : classVal);
-          },
-          addClass = function (classVal) {
-            if (angular.isObject(classVal) && !angular.isArray(classVal)) {
-              classVal = map(classVal, function(v, k) { if (v) { return k; } });
-            }
-            if (classVal) {
-              iElm.addClass(angular.isArray(classVal) ? classVal.join(' ') : classVal);
-            }
-          };
-
-      function _updateClass(newClass, oldClass) {
-        if (oldClass && !angular.equals(newClass, oldClass)) {
-          removeClass(oldClass);
+      var oldVal;
+      function _updateClass(newVal) {
+        if (!angular.equals(newVal,oldVal)) {
+          var newClasses = flattenClasses(newVal || '');
+          if (oldVal) {
+            iAttrs.$updateClass(newClasses, flattenClasses(oldVal));
+          } else {
+            iAttrs.$addClass(newClasses);
+          }
         }
-        addClass(newClass);
+        oldVal = angular.copy(newVal);
       }
+
+      function flattenClasses(classVal) {
+        if(angular.isArray(classVal)) {
+          return classVal.join(' ');
+        } else if (angular.isObject(classVal)) {
+          var classes = [];
+          angular.forEach(classVal, function(v, k) {
+            if (v) {
+              classes.push(k);
+            }
+          });
+          return classes.join(' ');
+        }
+
+        return classVal;
+      };
     }
   };
 }]);
